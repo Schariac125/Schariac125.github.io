@@ -1,3 +1,4 @@
+http://example.com/game/index.html
 http://example.com/link/index.html
 http://example.com/about/index.html
 http://example.com/anime/index.html
