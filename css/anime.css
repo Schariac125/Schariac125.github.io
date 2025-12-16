@@ -1,0 +1,102 @@
+/* ===== Anime grid for Hexo Butterfly ===== */
+
+/* Butterfly 正文容器主要是 #article-container（兼容少数主题用 .post-content） */
+#article-container .anime-grid,
+.post-content .anime-grid{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+  margin: 20px 0 !important;
+  align-items: stretch;
+}
+
+/* 移动端两列 */
+@media (max-width: 900px){
+  #article-container .anime-grid,
+  .post-content .anime-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* 防止 markdown 把块级内容包进 <p> 导致间距/布局异常 */
+#article-container .anime-grid > p,
+.post-content .anime-grid > p{
+  margin: 0 !important;
+}
+
+/* 卡片 */
+#article-container .anime-card,
+.post-content .anime-card{
+  border: 1px solid rgba(0,0,0,.08) !important;
+  border-radius: 14px !important;
+  padding: 14px !important;
+  background: var(--card-bg, #fff) !important;
+  overflow: hidden;
+}
+
+/* 海报容器：不用 aspect-ratio，改用伪元素占位（兼容性更好，绝不拉伸） */
+#article-container .anime-link,
+.post-content .anime-link{
+  display: block;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+#article-container .anime-link::before,
+.post-content .anime-link::before{
+  content: "";
+  display: block;
+  padding-top: 133.333%; /* 3/4 海报比例 */
+}
+
+/* 图片绝对定位填满容器，靠 object-fit 裁切，不会变形 */
+#article-container .anime-cover,
+.post-content .anime-cover{
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* 文本 */
+#article-container .anime-title,
+.post-content .anime-title{
+  font-weight: 600;
+  margin-top: 10px;
+  line-height: 1.35;
+}
+
+#article-container .anime-studio,
+.post-content .anime-studio{
+  font-size: .9em;
+  opacity: .75;
+  margin: 4px 0 10px;
+  line-height: 1.35;
+}
+
+#article-container .anime-review,
+.post-content .anime-review{
+  border: 1px dashed rgba(0,0,0,.18);
+  border-radius: 10px;
+  padding: 8px 10px;
+  min-height: 48px;
+  opacity: .75;
+  font-size: .9em;
+  line-height: 1.5;
+}
+
+/* 暗色模式 */
+[data-theme="dark"] #article-container .anime-card,
+[data-theme="dark"] .post-content .anime-card{
+  border-color: rgba(255,255,255,.12) !important;
+}
+[data-theme="dark"] #article-container .anime-review,
+[data-theme="dark"] .post-content .anime-review{
+  border-color: rgba(255,255,255,.18) !important;
+}

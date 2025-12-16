@@ -1,0 +1,49 @@
+.music-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:18px;
+  margin:20px 0;
+}
+
+@media (max-width: 900px){
+  .music-grid{
+    grid-template-columns:repeat(2, minmax(0, 1fr)); /* 移动端两列 */
+  }
+}
+
+.music-card{
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:14px;
+  padding:14px;
+  background:var(--card-bg, #fff);
+}
+
+.music-link{ display:block; }
+
+.music-cover{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  border-radius:12px;
+  display:block;
+}
+
+.music-title{
+  font-weight:600;
+  margin-top:10px;
+}
+
+.music-artist{
+  font-size:.9em;
+  opacity:.75;
+  margin:2px 0 10px;
+}
+
+.music-review{
+  border:1px dashed rgba(0,0,0,.18);
+  border-radius:10px;
+  padding:8px;
+  min-height:48px; /* 点评留白 */
+  opacity:.65;
+  font-size:.9em;
+}
