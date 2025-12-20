@@ -1,0 +1,20 @@
+/* 关键：只动 transform/opacity，最丝滑 */
+html.pjax-is-changing #content-inner {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+/* 页面加载完成后回到正常状态（进入动画） */
+#content-inner {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .28s cubic-bezier(.22,.61,.36,1),
+              transform .28s cubic-bezier(.22,.61,.36,1);
+}
+
+/* 可选：点击后先“离场”更明显一点 */
+html.pjax-leave #content-inner {
+  opacity: 0;
+  transform: translateY(-6px);
+}
