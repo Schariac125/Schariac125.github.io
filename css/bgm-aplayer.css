@@ -1,0 +1,54 @@
+/* 1) 默认把右下角 APlayer 固定条藏起来 */
+.aplayer.aplayer-fixed.aplayer-narrow{
+  right: 18px !important;   /* 让它跟按钮同侧 */
+  bottom: 70px !important;  /* 给按钮让位 */
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .25s ease, opacity .25s ease;
+}
+
+/* 2) 展开时显示 */
+html.bgm-open .aplayer.aplayer-fixed.aplayer-narrow{
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 3) 右下角按钮 */
+.bgm-toggle{
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 10000;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: var(--card-bg, #fff);
+  box-shadow: 0 12px 40px rgba(0,0,0,.18);
+  cursor: pointer;
+  user-select: none;
+  display: grid;
+  place-items: center;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto;
+}
+
+/* 图标：关闭/开启两种状态 */
+.bgm-toggle::before{
+  content: "♫";
+  font-size: 18px;
+  opacity: .85;
+}
+html.bgm-open .bgm-toggle::before{
+  content: "⏸";
+}
+
+/* 移动端稍微缩小一点 */
+@media (max-width: 900px){
+  .bgm-toggle{
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+  }
+}
