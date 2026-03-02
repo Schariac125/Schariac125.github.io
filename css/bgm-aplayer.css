@@ -1,6 +1,6 @@
 /* 1) 默认把右下角 APlayer 固定条藏起来 */
 .aplayer.aplayer-fixed.aplayer-narrow{
-  right: 18px !important;   /* 让它跟按钮同侧 */
+  left: 18px !important;    /* 让它跟按钮同侧 */
   bottom: 70px !important;  /* 给按钮让位 */
   transform: translateY(140%);
   opacity: 0;
@@ -18,7 +18,7 @@ html.bgm-open .aplayer.aplayer-fixed.aplayer-narrow{
 /* 3) 右下角按钮 */
 .bgm-toggle{
   position: fixed;
-  right: 18px;
+  left: 18px;
   bottom: 18px;
   z-index: 10000;
   width: 46px;
