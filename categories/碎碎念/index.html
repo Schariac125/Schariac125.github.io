@@ -142,35 +142,88 @@
   isToc: false,
   pageType: 'category'
 }</script><script src="/js/sakura.js"></script><link rel="stylesheet" href="/css/music.css"><link rel="stylesheet" href="/css/anime.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><link rel="stylesheet" href="/css/bgm-aplayer.css"><link rel="stylesheet" href="/css/page-transition.css"><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Schariac125妙妙屋" type="application/atom+xml">
-</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+</head><body><div id="loading-box"><div class="loading-overlay"><div class="progress-wrapper"><div class="progress-percent">少女祈祷中 0%</div><div class="progress-track"><div class="progress-bar"></div></div></div></div></div><script>(() => {
   const $loadingBox = document.getElementById('loading-box')
   const $body = document.body
-  const preloader = {
-    endLoading: () => {
-      if ($loadingBox.classList.contains('loaded')) return
-      $body.style.overflow = ''
+  const $bar = $loadingBox?.querySelector('.progress-bar')
+  const $label = $loadingBox?.querySelector('.progress-percent')
+
+  let current = 0
+  let target = 0
+  let rafId = null
+  let finished = false
+
+  const render = () => {
+    const diff = target - current
+    if (Math.abs(diff) < 0.1) {
+      current = target
+    } else {
+      current += diff * 0.14 + 0.6
+    }
+
+    const value = Math.min(100, Math.max(0, current))
+    if ($bar) $bar.style.width = value + '%'
+    if ($label) $label.textContent = '少女祈祷中 ' + Math.round(value) + '%'
+
+    if (value >= 100 && finished) {
       $loadingBox.classList.add('loaded')
-    },
-    initLoading: () => {
-      $body.style.overflow = 'hidden'
-      $loadingBox.classList.remove('loaded')
+      $body.style.overflow = ''
+      rafId = null
+      return
+    }
+
+    if (Math.abs(target - current) > 0.01) {
+      rafId = requestAnimationFrame(render)
+    } else {
+      rafId = null
     }
   }
 
-  preloader.initLoading()
+  const goTo = (val) => {
+    const next = Math.min(100, val)
+    if (next > target) {
+      target = next
+      if (!rafId) rafId = requestAnimationFrame(render)
+    }
+  }
+
+  const initLoading = () => {
+    finished = false
+    current = 0
+    target = 0
+    if ($bar) $bar.style.width = '0%'
+    if ($label) $label.textContent = '少女祈祷中 0%'
+    $loadingBox.classList.remove('loaded')
+    $body.style.overflow = 'hidden'
+    goTo(40)
+  }
+
+  const endLoading = () => {
+    if (finished) return
+    finished = true
+    goTo(100)
+    setTimeout(() => {
+      $loadingBox.classList.add('loaded')
+      $body.style.overflow = ''
+    }, 420)
+  }
+
+  initLoading()
 
   if (document.readyState === 'complete') {
-    preloader.endLoading()
+    endLoading()
   } else {
-    window.addEventListener('load', preloader.endLoading)
-    document.addEventListener('DOMContentLoaded', preloader.endLoading)
-    // Add timeout protection: force end after 7 seconds
-    setTimeout(preloader.endLoading, 7000)
+    document.addEventListener('DOMContentLoaded', () => goTo(80))
+    window.addEventListener('load', endLoading)
+    setTimeout(endLoading, 7000)
   }
 
   if (true) {
-    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
-    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+    btf.addGlobalFn('pjaxSend', () => {
+      initLoading()
+      goTo(50)
+    }, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', endLoading, 'preloader_end')
   }
 })()</script><div id="web_bg" style="background-image: url(/images/kozue_1.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/new2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 查成分</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/anime/"><i class="fa-fw fas fa-tv"></i><span> ACGN相关</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/readme/"><i class="fa-fw fa fa-book"></i><span> 入站必读</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-home-page" id="page-header" style="background-image: url(/images/kozue_2.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Schariac125妙妙屋</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 查成分</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/anime/"><i class="fa-fw fas fa-tv"></i><span> ACGN相关</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/readme/"><i class="fa-fw fa fa-book"></i><span> 入站必读</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="page-site-info"><h1 id="site-title">碎碎念</h1></div></header><main class="layout" id="content-inner"><div id="category"><div class="article-sort-title">分类 - 碎碎念</div><div class="article-sort"><div class="article-sort-item year">2025</div><div class="article-sort-item"><a class="article-sort-item-img" href="/2025/12/08/%E7%BB%8F%E9%AA%8C%E8%B4%B4/" title="经验贴"><img src="/images/hasu_2.png" alt="经验贴" onerror="this.onerror=null;this.src='/img/404.jpg'"></a><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2025-12-08T08:25:00.000Z" title="发表于 2025-12-08 16:25:00">2025-12-08</time></div><a class="article-sort-item-title" href="/2025/12/08/%E7%BB%8F%E9%AA%8C%E8%B4%B4/" title="经验贴">经验贴</a></div></div><div class="article-sort-item"><a class="article-sort-item-img" href="/2025/10/26/%E6%AD%A2%E7%97%9B%E6%97%A0%E6%95%88/" title="止痛无效"><img src="/images/hasu_2.png" alt="止痛无效" onerror="this.onerror=null;this.src='/img/404.jpg'"></a><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2025-10-25T16:30:00.000Z" title="发表于 2025-10-26 00:30:00">2025-10-26</time></div><a class="article-sort-item-title" href="/2025/10/26/%E6%AD%A2%E7%97%9B%E6%97%A0%E6%95%88/" title="止痛无效">止痛无效</a></div></div><div class="article-sort-item year">2024</div><div class="article-sort-item"><a class="article-sort-item-img" href="/2024/06/19/%E4%BB%8E%E3%80%8A%E5%90%B9%E5%93%8D%EF%BC%81%E4%B8%8A%E4%BD%8E%E9%9F%B3%E5%8F%B7%EF%BC%81%E3%80%8B%E5%88%B0%E5%BD%93%E4%BB%A3%E5%AD%A6%E7%94%9F%E7%A4%BE%E5%9B%A2%E6%B2%BB%E7%90%86%E7%9A%84%E7%AE%80%E8%A6%81%E8%AE%A8%E8%AE%BA/" title="从《吹响！上低音号！》到当代学生社团治理的简要讨论"><img src="/images/hasu_2.png" alt="从《吹响！上低音号！》到当代学生社团治理的简要讨论" onerror="this.onerror=null;this.src='/img/404.jpg'"></a><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2024-06-19T08:30:00.000Z" title="发表于 2024-06-19 16:30:00">2024-06-19</time></div><a class="article-sort-item-title" href="/2024/06/19/%E4%BB%8E%E3%80%8A%E5%90%B9%E5%93%8D%EF%BC%81%E4%B8%8A%E4%BD%8E%E9%9F%B3%E5%8F%B7%EF%BC%81%E3%80%8B%E5%88%B0%E5%BD%93%E4%BB%A3%E5%AD%A6%E7%94%9F%E7%A4%BE%E5%9B%A2%E6%B2%BB%E7%90%86%E7%9A%84%E7%AE%80%E8%A6%81%E8%AE%A8%E8%AE%BA/" title="从《吹响！上低音号！》到当代学生社团治理的简要讨论">从《吹响！上低音号！》到当代学生社团治理的简要讨论</a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/new2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Schariac125</div><div class="author-info-description">🌸</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Schariac125"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Schariac125" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:schariac125@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><h2 id="最近更新：26-3-03">最近更新：26.3.03</h2>
 <ul>
@@ -191,7 +244,7 @@
           </div>
           <ul class="card-category-list" id="aside-cat-list">
             <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"><span class="card-category-list-name">碎碎念</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/"><span class="card-category-list-name">程序设计</span><span class="card-category-list-count">3</span></a></li>
-          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/C-%E7%AE%97%E6%B3%95/" style="font-size: 1.5em; color: #99a9bf">C++,算法</a> <a href="/tags/%E4%B8%AA%E4%BA%BA/" style="font-size: 1.1em; color: #999">个人</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 1.3em; color: #99a1ac">杂谈</a></div></div><div class="card-widget card-archives">
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/C-%E7%AE%97%E6%B3%95/" style="font-size: 1.5em; color: #99a9bf">C++,算法</a> <a href="/tags/%E6%9D%82%E8%B0%88/" style="font-size: 1.3em; color: #99a1ac">杂谈</a> <a href="/tags/%E4%B8%AA%E4%BA%BA/" style="font-size: 1.1em; color: #999">个人</a></div></div><div class="card-widget card-archives">
     <div class="item-headline">
       <i class="fas fa-archive"></i>
       <span>归档</span>
@@ -237,7 +290,7 @@
         </li>
       
     </ul>
-  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">6</div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">97.2k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-02T15:14:18.936Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/images/kozue_2.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Schariac125</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.0.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"></div><script defer src="/js/ncm.js"></script><script defer src="/js/anime.js"></script><meting-js id="17572898505" server="netease" type="playlist" fixed="true" mini="true" autoplay="false" loop="all" order="random" preload="auto" volume="0.35" list-folded="true"> </meting-js><div id="bgm-toggle" class="bgm-toggle" title="背景音乐"></div><script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script><script defer src="/js/bgm-toggle.js"></script><script defer src="/js/page-transition.js"></script><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/fireworks.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">6</div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">97.2k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-03T09:29:14.484Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/images/kozue_2.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Schariac125</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.0.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"></div><script defer src="/js/ncm.js"></script><script defer src="/js/anime.js"></script><meting-js id="17572898505" server="netease" type="playlist" fixed="true" mini="true" autoplay="false" loop="all" order="random" preload="auto" volume="0.35" list-folded="true"> </meting-js><div id="bgm-toggle" class="bgm-toggle" title="背景音乐"></div><script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script><script defer src="/js/bgm-toggle.js"></script><script defer src="/js/page-transition.js"></script><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/fireworks.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
   const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
 
   window.pjax = new Pjax({

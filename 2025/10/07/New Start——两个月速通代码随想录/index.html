@@ -160,35 +160,88 @@
   isToc: true,
   pageType: 'post'
 }</script><script src="/js/sakura.js"></script><link rel="stylesheet" href="/css/music.css"><link rel="stylesheet" href="/css/anime.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><link rel="stylesheet" href="/css/bgm-aplayer.css"><link rel="stylesheet" href="/css/page-transition.css"><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Schariac125妙妙屋" type="application/atom+xml">
-</head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+</head><body><div id="loading-box"><div class="loading-overlay"><div class="progress-wrapper"><div class="progress-percent">少女祈祷中 0%</div><div class="progress-track"><div class="progress-bar"></div></div></div></div></div><script>(() => {
   const $loadingBox = document.getElementById('loading-box')
   const $body = document.body
-  const preloader = {
-    endLoading: () => {
-      if ($loadingBox.classList.contains('loaded')) return
-      $body.style.overflow = ''
+  const $bar = $loadingBox?.querySelector('.progress-bar')
+  const $label = $loadingBox?.querySelector('.progress-percent')
+
+  let current = 0
+  let target = 0
+  let rafId = null
+  let finished = false
+
+  const render = () => {
+    const diff = target - current
+    if (Math.abs(diff) < 0.1) {
+      current = target
+    } else {
+      current += diff * 0.14 + 0.6
+    }
+
+    const value = Math.min(100, Math.max(0, current))
+    if ($bar) $bar.style.width = value + '%'
+    if ($label) $label.textContent = '少女祈祷中 ' + Math.round(value) + '%'
+
+    if (value >= 100 && finished) {
       $loadingBox.classList.add('loaded')
-    },
-    initLoading: () => {
-      $body.style.overflow = 'hidden'
-      $loadingBox.classList.remove('loaded')
+      $body.style.overflow = ''
+      rafId = null
+      return
+    }
+
+    if (Math.abs(target - current) > 0.01) {
+      rafId = requestAnimationFrame(render)
+    } else {
+      rafId = null
     }
   }
 
-  preloader.initLoading()
+  const goTo = (val) => {
+    const next = Math.min(100, val)
+    if (next > target) {
+      target = next
+      if (!rafId) rafId = requestAnimationFrame(render)
+    }
+  }
+
+  const initLoading = () => {
+    finished = false
+    current = 0
+    target = 0
+    if ($bar) $bar.style.width = '0%'
+    if ($label) $label.textContent = '少女祈祷中 0%'
+    $loadingBox.classList.remove('loaded')
+    $body.style.overflow = 'hidden'
+    goTo(40)
+  }
+
+  const endLoading = () => {
+    if (finished) return
+    finished = true
+    goTo(100)
+    setTimeout(() => {
+      $loadingBox.classList.add('loaded')
+      $body.style.overflow = ''
+    }, 420)
+  }
+
+  initLoading()
 
   if (document.readyState === 'complete') {
-    preloader.endLoading()
+    endLoading()
   } else {
-    window.addEventListener('load', preloader.endLoading)
-    document.addEventListener('DOMContentLoaded', preloader.endLoading)
-    // Add timeout protection: force end after 7 seconds
-    setTimeout(preloader.endLoading, 7000)
+    document.addEventListener('DOMContentLoaded', () => goTo(80))
+    window.addEventListener('load', endLoading)
+    setTimeout(endLoading, 7000)
   }
 
   if (true) {
-    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
-    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+    btf.addGlobalFn('pjaxSend', () => {
+      initLoading()
+      goTo(50)
+    }, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', endLoading, 'preloader_end')
   }
 })()</script><div id="web_bg" style="background-image: url(/images/kozue_1.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/new2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 查成分</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/anime/"><i class="fa-fw fas fa-tv"></i><span> ACGN相关</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/readme/"><i class="fa-fw fa fa-book"></i><span> 入站必读</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/images/hasu_2.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Schariac125妙妙屋</span></a><a class="nav-page-title" href="/"><span class="site-name">New Start——两个月速通代码随想录</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 查成分</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/anime/"><i class="fa-fw fas fa-tv"></i><span> ACGN相关</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/readme/"><i class="fa-fw fa fa-book"></i><span> 入站必读</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">New Start——两个月速通代码随想录</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-07T08:25:00.000Z" title="发表于 2025-10-07 16:25:00">2025-10-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-11-21T13:03:57.558Z" title="更新于 2025-11-21 21:03:57">2025-11-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">33.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>168分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>New Start——两个月速通代码随想录</h1>
 <h2 id="写在前面">写在前面</h2>
