@@ -1,0 +1,362 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>糊代码糊到最后是输输输 | Schariac125妙妙屋</title><meta name="author" content="Schariac125"><meta name="copyright" content="Schariac125"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="只有老天爷看得懂了——基于自己写的纯黑框旮旯引擎的反思 零：前言 项目地址：https:&#x2F;&#x2F;github.com&#x2F;Schariac125&#x2F;Gal-Engine-Try 我是第一次学Python，也是第一次学oop。你知道的，我以前只会那种面条式的C++代码和一些基础的不能再基础的算法了，上一次写项目还是写黑马的那个最基础的基于C语言的管理系统，只实现了增改查删，然后就啥都没了。 我花了两天时间写了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="糊代码糊到最后是输输输">
+<meta property="og:url" content="http://example.com/2026/03/09/%E5%8F%AA%E6%9C%89%E8%80%81%E5%A4%A9%E7%88%B7%E7%9C%8B%E5%BE%97%E6%87%82%E4%BA%86%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E7%BA%AF%E9%BB%91%E6%A1%86%E6%97%AE%E6%97%AF%E5%BC%95%E6%93%8E%E7%9A%84%E6%80%9D%E8%80%83/index.html">
+<meta property="og:site_name" content="Schariac125妙妙屋">
+<meta property="og:description" content="只有老天爷看得懂了——基于自己写的纯黑框旮旯引擎的反思 零：前言 项目地址：https:&#x2F;&#x2F;github.com&#x2F;Schariac125&#x2F;Gal-Engine-Try 我是第一次学Python，也是第一次学oop。你知道的，我以前只会那种面条式的C++代码和一些基础的不能再基础的算法了，上一次写项目还是写黑马的那个最基础的基于C语言的管理系统，只实现了增改查删，然后就啥都没了。 我花了两天时间写了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/hasu_2.png">
+<meta property="article:published_time" content="2026-03-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-08T16:07:50.522Z">
+<meta property="article:author" content="Schariac125">
+<meta property="article:tag" content="Python,OOP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/hasu_2.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "糊代码糊到最后是输输输",
+  "url": "http://example.com/2026/03/09/%E5%8F%AA%E6%9C%89%E8%80%81%E5%A4%A9%E7%88%B7%E7%9C%8B%E5%BE%97%E6%87%82%E4%BA%86%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E7%BA%AF%E9%BB%91%E6%A1%86%E6%97%AE%E6%97%AF%E5%BC%95%E6%93%8E%E7%9A%84%E6%80%9D%E8%80%83/",
+  "image": "http://example.com/images/hasu_2.png",
+  "datePublished": "2026-03-08T16:00:00.000Z",
+  "dateModified": "2026-03-08T16:07:50.522Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Schariac125",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/images/nav1.jpg"><link rel="canonical" href="http://example.com/2026/03/09/%E5%8F%AA%E6%9C%89%E8%80%81%E5%A4%A9%E7%88%B7%E7%9C%8B%E5%BE%97%E6%87%82%E4%BA%86%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E7%BA%AF%E9%BB%91%E6%A1%86%E6%97%AE%E6%97%AF%E5%BC%95%E6%93%8E%E7%9A%84%E6%80%9D%E8%80%83/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '糊代码糊到最后是输输输',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script src="/js/sakura.js"></script><link rel="stylesheet" href="/css/music.css"><link rel="stylesheet" href="/css/anime.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><link rel="stylesheet" href="/css/bgm-aplayer.css"><link rel="stylesheet" href="/css/page-transition.css"><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Schariac125妙妙屋" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-overlay"><div class="progress-wrapper"><div class="progress-percent">少女祈祷中 0%</div><div class="progress-track"><div class="progress-bar"></div></div></div></div></div><script>(() => {
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const $bar = $loadingBox?.querySelector('.progress-bar')
+  const $label = $loadingBox?.querySelector('.progress-percent')
+
+  let current = 0
+  let target = 0
+  let rafId = null
+  let finished = false
+
+  const render = () => {
+    const diff = target - current
+    if (Math.abs(diff) < 0.1) {
+      current = target
+    } else {
+      current += diff * 0.14 + 0.6
+    }
+
+    const value = Math.min(100, Math.max(0, current))
+    if ($bar) $bar.style.width = value + '%'
+    if ($label) $label.textContent = '少女祈祷中 ' + Math.round(value) + '%'
+
+    if (value >= 100 && finished) {
+      $loadingBox.classList.add('loaded')
+      $body.style.overflow = ''
+      rafId = null
+      return
+    }
+
+    if (Math.abs(target - current) > 0.01) {
+      rafId = requestAnimationFrame(render)
+    } else {
+      rafId = null
+    }
+  }
+
+  const goTo = (val) => {
+    const next = Math.min(100, val)
+    if (next > target) {
+      target = next
+      if (!rafId) rafId = requestAnimationFrame(render)
+    }
+  }
+
+  const initLoading = () => {
+    finished = false
+    current = 0
+    target = 0
+    if ($bar) $bar.style.width = '0%'
+    if ($label) $label.textContent = '少女祈祷中 0%'
+    $loadingBox.classList.remove('loaded')
+    $body.style.overflow = 'hidden'
+    goTo(40)
+  }
+
+  const endLoading = () => {
+    if (finished) return
+    finished = true
+    goTo(100)
+    setTimeout(() => {
+      $loadingBox.classList.add('loaded')
+      $body.style.overflow = ''
+    }, 420)
+  }
+
+  initLoading()
+
+  if (document.readyState === 'complete') {
+    endLoading()
+  } else {
+    document.addEventListener('DOMContentLoaded', () => goTo(80))
+    window.addEventListener('load', endLoading)
+    setTimeout(endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', () => {
+      initLoading()
+      goTo(50)
+    }, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', endLoading, 'preloader_end')
+  }
+})()</script><div id="web_bg" style="background-image: url(/images/kozue_1.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/new2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 查成分</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/anime/"><i class="fa-fw fas fa-tv"></i><span> ACGN相关</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/readme/"><i class="fa-fw fa fa-book"></i><span> 入站必读</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/images/hasu_2.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Schariac125妙妙屋</span></a><a class="nav-page-title" href="/"><span class="site-name">糊代码糊到最后是输输输</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 查成分</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/anime/"><i class="fa-fw fas fa-tv"></i><span> ACGN相关</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/readme/"><i class="fa-fw fa fa-book"></i><span> 入站必读</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">糊代码糊到最后是输输输</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-08T16:00:00.000Z" title="发表于 2026-03-09 00:00:00">2026-03-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-08T16:07:50.522Z" title="更新于 2026-03-09 00:07:50">2026-03-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1/">程序设计</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">2.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>只有老天爷看得懂了——基于自己写的纯黑框旮旯引擎的反思</h1>
+<h2 id="零：前言">零：前言</h2>
+<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/Schariac125/Gal-Engine-Try">https://github.com/Schariac125/Gal-Engine-Try</a></p>
+<p>我是第一次学Python，也是第一次学oop。你知道的，我以前只会那种面条式的C++代码和一些基础的不能再基础的算法了，上一次写项目还是写黑马的那个最基础的基于C语言的管理系统，只实现了增改查删，然后就啥都没了。</p>
+<p>我花了两天时间写了西二AI第一轮的那俩task，就是那个奇怪的旮旯给木和宝可梦。然后的然后，我鬼点子生成了，变成了我噩梦的开端。</p>
+<p>我当时觉得那个旮旯给木的框架耦合度也太高了，然后我就想着：</p>
+<p>“诶！那我重新写一个旮旯给木的引擎不就好了，先在黑框里面跑起来，后面看看怎么实现可视化”</p>
+<p>从这一刻起我的人生彻底被毁掉了（？）</p>
+<h2 id="一：基本介绍">一：基本介绍</h2>
+<p>最基本的介绍在项目地址的README文件里已经列的轻轻楚楚了，这里也不多说，就简单说说看这个东西到底是怎样的一大坨。</p>
+<p>我第一天晚上写这个引擎基本上只实现了一个框架还有其他的几项功能：最基本的存档读档删档，角色基类初始化，游戏主菜单界面，游戏主体游玩界面，在共通线结尾检查好感度是否已经达到阈值可以进线等等等等。后来加上了查询历史进度，跳过剧情，跳转选项。原本是打算做可视化的，但现在看到这一大坨代码，我只想着全部推倒换一个架构然后重构。</p>
+<h2 id="二：痛点在哪里">二：痛点在哪里</h2>
+<p>说实在话，第一天晚上只写出来那个框架的时候我自我感觉其实还可以，也完全没有意识到我现在的这个架构有多么的逆天。我是什么时候发现的？我今天本来就打算加一个跳过剧情的功能，就像真的旮旯给木那样子。但实现这个东西需要我去编写三个子功能，就是查询并且记录全局历史进度，查询应该跳转的点，额外判断选项不可被跳过。</p>
+<p>全局历史进度我想的非常简单，用json去记录呗，记录一下共通线的历史最长和每个角色单人线的历史最长，到最后不就和存档读档一个逻辑了？这么干我真觉得可行，但是后来我去真的开始做跳过功能的时候，才发现最逆天的根本不是这个。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 实现记录历史最远点功能，为后续跳过历史已读剧情基础</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">save_overall</span>(<span class="params">self</span>):</span><br><span class="line">    overall_filename = os.path.join(<span class="string">&quot;save&quot;</span>, <span class="string">&quot;save_overall.json&quot;</span>)</span><br><span class="line">    overall_data = <span class="variable language_">self</span>.load_overall_history()</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> <span class="variable language_">self</span>.begin_love:</span><br><span class="line">        history_common_idx = overall_data.get(<span class="string">&quot;common&quot;</span>, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.screen_idx_common &gt; history_common_idx:</span><br><span class="line">            overall_data[<span class="string">&quot;common&quot;</span>] = <span class="variable language_">self</span>.screen_idx_common</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(overall_filename, <span class="string">&quot;w&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                json.dump(overall_data, f, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">2</span>)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="variable language_">self</span>.current_girl <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+<p>跳过功能其实也不难做，写一个接口，等着后面在共通线和个人线里面调用就可以了，那么具体怎么实现呢，因为我有一个全局记录处于哪一句话的变量（这个我感觉很抽象），如果要跳过就把json里面的数据去比对一下，修改为json里面的数据再交给控制剧情播放的函数就可以了。具体代码是这样子的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">skip</span>(<span class="params">self, steps, current_idx, history_limit, stop_at_choice=<span class="literal">False</span></span>):</span><br><span class="line">        next_idx = current_idx</span><br><span class="line">        <span class="keyword">while</span> next_idx &lt; <span class="built_in">len</span>(steps):</span><br><span class="line">            _, step_data = steps[next_idx]</span><br><span class="line">            <span class="keyword">if</span> stop_at_choice <span class="keyword">and</span> step_data.get(<span class="string">&quot;choice&quot;</span>) == <span class="string">&quot;True&quot;</span>:</span><br><span class="line">                <span class="keyword">return</span> next_idx</span><br><span class="line">            <span class="keyword">if</span> next_idx &gt;= history_limit:</span><br><span class="line">                <span class="keyword">return</span> next_idx</span><br><span class="line">            next_idx += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> next_idx</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">execute_skip</span>(<span class="params">self, steps, current_idx, history_limit, stop_at_choice=<span class="literal">False</span></span>):</span><br><span class="line">        skip_target = <span class="variable language_">self</span>.skip(steps, current_idx, history_limit, stop_at_choice)</span><br><span class="line">        <span class="keyword">if</span> skip_target &gt; current_idx:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;已跳过 <span class="subst">&#123;skip_target - current_idx&#125;</span> 条剧情。&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> skip_target</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.auto_skip_enabled:</span><br><span class="line">            <span class="variable language_">self</span>.auto_skip_enabled = <span class="literal">False</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;自动连续跳过已停止，前方没有可跳过的已读剧情。&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> current_idx</span><br></pre></td></tr></table></figure>
+<p>写完这个东西，我去改接口，后面才发现，最逆天的原来是在剧情播放的主流程里面去调用这个，因为我设计的json格式的原因，我还要做各种特判。在agent的帮助下我非常丑陋的写完了，但直接力竭了，我发现了我这个架构最逆天的地方，无论是用户交互还是和json文件交互还是更新游戏基本状态，我都放在了<code>game.py</code>这个文件里面去实现，导致这个文件后面的代码长度巨长，也巨难维护，你永远都不知道你加了这个新功能之后会有哪里出现一些意想不到的bug，然后调用一个函数的接口，去看一下具体怎么实现的，发现它里面在调用另一个函数的接口，然后再看再看，就直接嵌套了，这里调用来那里调用去，全部糊在一个文件里，我维护起来确实是要死了。</p>
+<p>只能说，我没有软件工程思维和面向对象思维，而且这才哪到哪。</p>
+<p>更逆天的是，我实现角色类的那个文件竟然把个人写写在了主角具体的子类里面，然后后知后觉发现不对，这个不应该是基类实现的吗，子类每个都去实现一遍这个，那代码又要变成一坨了，然后被我改成了这样</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Character</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,name,role</span>):</span><br><span class="line">        <span class="variable language_">self</span>.name=name</span><br><span class="line">        <span class="variable language_">self</span>.role=role</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MainCharacter</span>(<span class="title class_ inherited__">Character</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,name,role=<span class="string">&quot;MainGirl&quot;</span>,affinity=<span class="number">0</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__(name,role)</span><br><span class="line">        <span class="variable language_">self</span>.affinity=affinity</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">change_affinity</span>(<span class="params">self,change_amount</span>):</span><br><span class="line">        <span class="variable language_">self</span>.affinity+=change_amount</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;self.name&#125;</span>的好感度上升了<span class="subst">&#123;change_amount&#125;</span>点，目前好感度为<span class="subst">&#123;self.affinity&#125;</span>点。&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_affinity</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.affinity</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">is_love</span>(<span class="params">self</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.affinity &gt;= <span class="number">100</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_story_filename</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> os.path.join(<span class="string">&quot;story&quot;</span>, <span class="string">&quot;girls&quot;</span>, <span class="string">f&quot;<span class="subst">&#123;self.name&#125;</span>.json&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">girl_story</span>(<span class="params">self,screen_idx,game=<span class="literal">None</span></span>):</span><br><span class="line">        idx=screen_idx</span><br><span class="line">        story_filename=<span class="variable language_">self</span>.get_story_filename()</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(story_filename,<span class="string">&#x27;r&#x27;</span>,encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">                story_data=json.load(f)</span><br><span class="line">                steps=<span class="built_in">sorted</span>(story_data.items(), key=<span class="keyword">lambda</span> kv:<span class="built_in">int</span>(kv[<span class="number">0</span>].replace(<span class="string">&quot;step&quot;</span>,<span class="string">&quot;&quot;</span>)))</span><br><span class="line">                history_limit = idx</span><br><span class="line">                <span class="keyword">if</span> game <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">                    history_limit = game.get_history_limit()</span><br><span class="line">                <span class="keyword">if</span> idx&gt;=<span class="built_in">len</span>(steps):</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;剧情已经结束了&quot;</span>)</span><br><span class="line">                    <span class="keyword">return</span> screen_idx</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="keyword">while</span> screen_idx &lt; <span class="built_in">len</span>(steps):</span><br><span class="line">                        _,story_text = steps[screen_idx]</span><br><span class="line">                        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;story_text[<span class="string">&#x27;speaker&#x27;</span>]&#125;</span>:<span class="subst">&#123;story_text[<span class="string">&#x27;text&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line">                        screen_idx+=<span class="number">1</span></span><br><span class="line">                        <span class="keyword">if</span> game <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">                            game.save_overall()</span><br><span class="line">                            history_limit = game.get_history_limit()</span><br><span class="line">                            <span class="keyword">if</span> game.auto_skip_enabled:</span><br><span class="line">                                screen_idx = game.execute_skip(steps, screen_idx, history_limit)</span><br><span class="line">                                <span class="keyword">continue</span></span><br><span class="line">                            command_result=game.prompt_story_command()</span><br><span class="line">                            <span class="keyword">if</span> command_result==<span class="string">&quot;menu&quot;</span>:</span><br><span class="line">                                game.open_story_menu()</span><br><span class="line">                                <span class="keyword">return</span> screen_idx</span><br><span class="line">                            <span class="keyword">if</span> command_result==<span class="string">&quot;skip&quot;</span>:</span><br><span class="line">                                screen_idx = game.execute_skip(steps, screen_idx, history_limit)</span><br><span class="line">                    <span class="keyword">return</span> screen_idx</span><br><span class="line">        <span class="keyword">except</span> FileNotFoundError:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;剧情文件不存在。&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span> screen_idx</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">girl_end</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;self.name&#125;</span>的个人线已经结束了！&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>从这个代码其实也能看出很多东西了，那就是剧情播放的那个逻辑真的是做的一坨，无穷无尽的if和else嵌套在一起，无穷无尽的各种奇怪调用，读起来难受的很。</p>
+<p>也有可能是我变量名取得抽象吧，我有自知之明的。</p>
+<h2 id="三：反思">三：反思</h2>
+<p>我后来彻底放弃了用<code>pygame</code>做可视化的想法，因为比起可视化，我觉得重构是更重要的。</p>
+<p>我和哈基米讨论了一圈，它告诉我我现在架构的问题就是<code>game.py</code>这个文件里塞的东西实在是太多了，它说这个叫做上帝类隐患，到后面会让我的主文件越来越臃肿难以维护，而且程序对于剧情的逻辑控制分布在非常多不同的角落。根本拆不开。</p>
+<p>后来我问，更优秀的架构应该是什么样子的，它告诉我要强调演出和逻辑分离，引入剧情解释器，不要让角色和主程序本身去解析json文件，建立一个命令表等等等等。</p>
+<p>简单来说就是，数据，逻辑，表现这三者必须分离开来，不然迟早会爆。我现在的项目就是把逻辑和表现塞在一起了。</p>
+<p>我细想，有道理。反思了一下自己发现自己还是那种面条式编程的思维，好像自己在做oop，实际上也只不过是写了一大堆轮子然后各种缝合，最后继续面条式。</p>
+<p>嵌了一大堆if和else就是最明显的体现了。</p>
+<p>我说作业的那个架构耦合度太高，实际上我自己写的耦合度也是爆炸级的，大哥不说二哥了这下。其实应该做到一点就是</p>
+<p>“不要让数据知道自己在被谁使用”</p>
+<p>我总是过度关注现在数据到哪了，数据到底要怎样流动。这估计是我以前刷题思维的后遗症，因为刷题的时候我必须完全掌控数据的流动，数据必须要被知道它被谁调用了，感觉还是面条思维。</p>
+<p>或许真的工程环境不需要非常关注？不过我也不知道就是了，但我现在就是这么觉得的。</p>
+<h2 id="四：结语">四：结语</h2>
+<p>干了一件蠢事也不能说完全没有收获，现在想想或许让我意识到这种架构有多逆天，好的架构有多重要也是有意义的。</p>
+<p>然后确实印证了一件事，大多数时间不是花在写代码上，而是思考架构和设计上。</p>
+<p>那个项目估计也不会再更新了， 因为过两天，那里的代码只剩下老天爷看得懂了。</p>
+<p><strong>毕竟糊代码糊到最后就是输输输</strong></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Schariac125</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/03/09/%E5%8F%AA%E6%9C%89%E8%80%81%E5%A4%A9%E7%88%B7%E7%9C%8B%E5%BE%97%E6%87%82%E4%BA%86%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E7%BA%AF%E9%BB%91%E6%A1%86%E6%97%AE%E6%97%AF%E5%BC%95%E6%93%8E%E7%9A%84%E6%80%9D%E8%80%83/">http://example.com/2026/03/09/%E5%8F%AA%E6%9C%89%E8%80%81%E5%A4%A9%E7%88%B7%E7%9C%8B%E5%BE%97%E6%87%82%E4%BA%86%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E7%BA%AF%E9%BB%91%E6%A1%86%E6%97%AE%E6%97%AF%E5%BC%95%E6%93%8E%E7%9A%84%E6%80%9D%E8%80%83/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Schariac125妙妙屋</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python-OOP/">Python,OOP</a></div><div class="post-share"><div class="social-share" data-image="/images/hasu_2.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/12/08/%E7%BB%8F%E9%AA%8C%E8%B4%B4/" title="经验贴"><img class="cover" src="/images/hasu_2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">经验贴</div></div><div class="info-2"><div class="info-item-1">笔者信息 2024级环境工程降转2025级计算机类 机考520分第一，面试32，综合排名第二。 EMAIL：schariac125@gmail.com GitHub链接 个人博客链接 上面的GitHub链接有我自己学习过程中的笔记，预计在2026年初完全整理完毕，博客中有部分我撰写的文章（我可能有闲工夫会更新？），在分类栏中找到程序设计一类即可。如果有错，可以通过邮箱联系我。 目录  一 关于备考 二 关于机考与面试 三 关于我自己 四 To the Lost You 五 致谢 六 资源  关于备考 思来想去，还是先把干货部分放在前面吧，不浪费大家的时间了。 有关于转专业基本政策等的什么东西我不想在这里过多赘述，详细可以看交流群里的那一篇文档，里面写的清清楚楚（uuz的恩情还不尽\O/）。如果有文档里没有提及的部分可以在群里问喵（学长学姐都很热情不会把你们吃掉的） 准备工作：  一个适合自己的IDE。 一个用于记笔记的markdown编辑器。 一个洛谷账号，一个力扣账号，一个PTA平台账号。 一个AI平台账号。 一颗能坚持下来的心  关于IDE，如果是在PTA平台刷题，那么只建议...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/new2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Schariac125</div><div class="author-info-description">🌸</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Schariac125"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Schariac125" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:schariac125@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><h2 id="最近更新：26-3-09">最近更新：26.3.09</h2>
+<ul>
+<li>更新一篇文章</li>
+<li>移除一篇文章</li>
+</ul>
+<h2 id="🍃-欢迎光临-Schariac125-的妙妙屋">🍃 欢迎光临 Schariac125 的妙妙屋</h2>
+<p>这里记录学习的点滴，也藏着一些生活的碎碎念。<br>
+愿你来去轻盈，收获一份安静与灵感。</p>
+</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">只有老天爷看得懂了——基于自己写的纯黑框旮旯引擎的反思</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%B6%EF%BC%9A%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">零：前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%EF%BC%9A%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.2.</span> <span class="toc-text">一：基本介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%EF%BC%9A%E7%97%9B%E7%82%B9%E5%9C%A8%E5%93%AA%E9%87%8C"><span class="toc-number">1.3.</span> <span class="toc-text">二：痛点在哪里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%EF%BC%9A%E5%8F%8D%E6%80%9D"><span class="toc-number">1.4.</span> <span class="toc-text">三：反思</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%EF%BC%9A%E7%BB%93%E8%AF%AD"><span class="toc-number">1.5.</span> <span class="toc-text">四：结语</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/03/09/%E5%8F%AA%E6%9C%89%E8%80%81%E5%A4%A9%E7%88%B7%E7%9C%8B%E5%BE%97%E6%87%82%E4%BA%86%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E7%BA%AF%E9%BB%91%E6%A1%86%E6%97%AE%E6%97%AF%E5%BC%95%E6%93%8E%E7%9A%84%E6%80%9D%E8%80%83/" title="糊代码糊到最后是输输输">糊代码糊到最后是输输输</a><time datetime="2026-03-08T16:00:00.000Z" title="发表于 2026-03-09 00:00:00">2026-03-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/08/%E7%BB%8F%E9%AA%8C%E8%B4%B4/" title="经验贴">经验贴</a><time datetime="2025-12-08T08:25:00.000Z" title="发表于 2025-12-08 16:25:00">2025-12-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/02/PAT-B%E7%9A%84%E5%86%8D%E6%8E%A2%E5%86%8D%E6%8A%A5%E2%80%94%E2%80%94%E5%B8%B8%E8%A7%81%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A8%A1%E6%8B%9F%E6%9D%BF%E5%AD%90/" title="PAT-B的再探再报">PAT-B的再探再报</a><time datetime="2025-11-01T16:20:00.000Z" title="发表于 2025-11-02 00:20:00">2025-11-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/26/%E6%AD%A2%E7%97%9B%E6%97%A0%E6%95%88/" title="止痛无效">止痛无效</a><time datetime="2025-10-25T16:30:00.000Z" title="发表于 2025-10-26 00:30:00">2025-10-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/07/New%20Start%E2%80%94%E2%80%94%E4%B8%A4%E4%B8%AA%E6%9C%88%E9%80%9F%E9%80%9A%E4%BB%A3%E7%A0%81%E9%9A%8F%E6%83%B3%E5%BD%95/" title="New Start——两个月速通代码随想录">New Start——两个月速通代码随想录</a><time datetime="2025-10-07T08:25:00.000Z" title="发表于 2025-10-07 16:25:00">2025-10-07</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/images/hasu_2.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Schariac125</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.0.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script></div><script defer src="/js/ncm.js"></script><script defer src="/js/anime.js"></script><meting-js id="17572898505" server="netease" type="playlist" fixed="true" mini="true" autoplay="false" loop="all" order="random" preload="auto" volume="0.35" list-folded="true"> </meting-js><div id="bgm-toggle" class="bgm-toggle" title="背景音乐"></div><script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script><script defer src="/js/bgm-toggle.js"></script><script defer src="/js/page-transition.js"></script><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/fireworks.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="请输入你要搜索的内容" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.1"></script></div></div></body></html>
