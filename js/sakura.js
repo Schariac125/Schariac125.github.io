@@ -1,7 +1,12 @@
 // sakura.js - Hexo 适用版
 document.addEventListener('DOMContentLoaded', function() {
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent)
+        || window.matchMedia('(max-width: 768px)').matches
+        || window.matchMedia('(pointer: coarse)').matches;
+    if (isMobile) return;
+
     const flakes = [];
-    const flakeCount = 40; // 雪花数量
+    const flakeCount = 40; // 樱花数量
     const body = document.body;
     const twinkleStyleId = 'snowflake-twinkle-style';
 
@@ -18,18 +23,19 @@ document.addEventListener('DOMContentLoaded', function() {
         ensureTwinkleStyle();
         const flake = document.createElement('div');
         flake.className = 'snowflake';
-        const size = Math.random() * 6 + 6; // 雪花大小 6-12px
+        const size = Math.random() * 6 + 6; // 花瓣大小 6-12px
         flake.style.width = size + 'px';
         flake.style.height = size + 'px';
         flake.style.position = 'fixed';
         flake.style.top = '-20px';
         flake.style.left = Math.random() * window.innerWidth + 'px';
-        flake.style.background = 'radial-gradient(white 40%, rgba(255,255,255,0.6))';
-        flake.style.borderRadius = '50%';
+        flake.style.background = 'radial-gradient(circle at 30% 30%, #ffe9f3 0%, #ffb7d5 55%, #ff8fbe 100%)';
+        flake.style.borderRadius = '70% 45% 70% 45%';
         flake.style.opacity = Math.random() * 0.6 + 0.4;
         flake.style.filter = 'blur(0.3px)';
         flake.style.pointerEvents = 'none';
         flake.style.zIndex = 9999;
+        flake.style.transform = `rotate(${(Math.random() * 360).toFixed(0)}deg)`;
         const twinkleMin = (Math.random() * 0.2 + 0.2).toFixed(2);
         const twinkleMax = (Math.random() * 0.3 + 0.7).toFixed(2);
         flake.style.setProperty('--twinkle-min', twinkleMin);
