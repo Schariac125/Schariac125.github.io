@@ -9,6 +9,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const flakeCount = 40; // 樱花数量
     const body = document.body;
     const twinkleStyleId = 'snowflake-twinkle-style';
+    const repelRadius = 185;
+    const repelStrength = 1.05;
+    const repelActiveDuration = 220;
+    const mouse = {
+        x: -9999,
+        y: -9999,
+        vx: 0,
+        vy: 0,
+        lastX: 0,
+        lastY: 0,
+        lastTime: 0,
+        lastMove: 0
+    };
 
     function ensureTwinkleStyle() {
         if (document.getElementById(twinkleStyleId)) return;
@@ -24,11 +37,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const flake = document.createElement('div');
         flake.className = 'snowflake';
         const size = Math.random() * 6 + 6; // 花瓣大小 6-12px
+        const x = Math.random() * window.innerWidth;
+        const y = -20;
         flake.style.width = size + 'px';
         flake.style.height = size + 'px';
         flake.style.position = 'fixed';
-        flake.style.top = '-20px';
-        flake.style.left = Math.random() * window.innerWidth + 'px';
+        flake.style.top = y + 'px';
+        flake.style.left = x + 'px';
         flake.style.background = 'radial-gradient(circle at 30% 30%, #ffe9f3 0%, #ffb7d5 55%, #ff8fbe 100%)';
         flake.style.borderRadius = '70% 45% 70% 45%';
         flake.style.opacity = Math.random() * 0.6 + 0.4;
@@ -45,22 +60,76 @@ document.addEventListener('DOMContentLoaded', function() {
         flake.style.animation = `snowTwinkle ${duration}s ease-in-out ${delay}s infinite alternate`;
 
         body.appendChild(flake);
-        flakes.push({el: flake, speed: Math.random() * 1.5 + 0.8, drift: Math.random() * 1.5 + 0.5, angle: Math.random() * 360});
+        flakes.push({
+            el: flake,
+            x,
+            y,
+            vx: 0,
+            vy: 0,
+            speed: Math.random() * 1.5 + 0.8,
+            drift: Math.random() * 1.5 + 0.5,
+            angle: Math.random() * 360
+        });
+    }
+
+    function updateMouseState(event) {
+        const now = performance.now();
+        if (mouse.lastTime) {
+            const dt = Math.max(now - mouse.lastTime, 16);
+            mouse.vx = (event.clientX - mouse.lastX) / dt;
+            mouse.vy = (event.clientY - mouse.lastY) / dt;
+        }
+
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+        mouse.lastX = event.clientX;
+        mouse.lastY = event.clientY;
+        mouse.lastTime = now;
+        mouse.lastMove = now;
     }
 
     // 更新雪花位置
     function animateFlakes() {
+        const now = performance.now();
+        const isMouseActive = now - mouse.lastMove < repelActiveDuration;
+
         for (let i = flakes.length - 1; i >= 0; i--) {
             const f = flakes[i];
             const el = f.el;
-            let top = parseFloat(el.style.top);
-            top += f.speed;
-            el.style.top = top + 'px';
-            el.style.left = parseFloat(el.style.left) + Math.sin(f.angle * Math.PI / 180) * f.drift + 'px';
+            f.vx *= 0.92;
+            f.vy *= 0.9;
+            f.y += f.speed;
+            f.x += Math.sin(f.angle * Math.PI / 180) * f.drift;
+
+            if (isMouseActive) {
+                const dx = f.x - mouse.x;
+                const dy = f.y - mouse.y;
+                const distance = Math.hypot(dx, dy);
+
+                if (distance < repelRadius) {
+                    const ratio = 1 - distance / repelRadius;
+                    const influence = ratio * ratio;
+                    const safeDistance = distance || 1;
+                    const nx = dx / safeDistance;
+                    const ny = dy / safeDistance;
+                    const directionalBoost = (mouse.vx * nx + mouse.vy * ny) * 8.5;
+                    const push = Math.max(0.22, repelStrength + directionalBoost) * influence;
+
+                    // 鼠标划过时，花瓣会被轻轻荡开
+                    f.vx += nx * push;
+                    f.vy += ny * push * 0.58;
+                    f.angle += influence * 0.95;
+                }
+            }
+
             f.angle += 0.4;
+            f.x += f.vx;
+            f.y += f.vy;
+            el.style.top = f.y + 'px';
+            el.style.left = f.x + 'px';
 
             // 超出屏幕移除
-            if (top > window.innerHeight) {
+            if (f.y > window.innerHeight + 30 || f.x < -40 || f.x > window.innerWidth + 40) {
                 body.removeChild(el);
                 flakes.splice(i, 1);
             }
@@ -75,6 +144,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 持续生成新的雪花
     setInterval(createFlake, 400);
+
+    window.addEventListener('pointermove', updateMouseState, { passive: true });
+    window.addEventListener('pointerleave', function() {
+        mouse.x = -9999;
+        mouse.y = -9999;
+        mouse.vx = 0;
+        mouse.vy = 0;
+        mouse.lastMove = 0;
+    }, { passive: true });
 
     // 启动动画
     animateFlakes();
