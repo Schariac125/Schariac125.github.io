@@ -1,0 +1,518 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>自顶向下——可能要懂的底层原理简单讲解 | Schariac125妙妙屋</title><meta name="author" content="Schariac125"><meta name="copyright" content="Schariac125"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="自顶向下——可能要懂的底层原理简单讲解 0.致谢  uuz 让我在最前面写一个给他的致谢   感谢 ShaddockNH3 长期以来的帮助和指导  1.前言 现代的一些人工智能库（例如 transformer 库）提供了高度封装的方法供现在的 AI 应用开发去直接调用，从而不需要去关注方法的底层实现是什么样的，从顶层应用的角度上讲，这无疑是技术上的进步。以 Transformer 的实现为例，传统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自顶向下——可能要懂的底层原理简单讲解">
+<meta property="og:url" content="http://example.com/2026/05/31/%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/index.html">
+<meta property="og:site_name" content="Schariac125妙妙屋">
+<meta property="og:description" content="自顶向下——可能要懂的底层原理简单讲解 0.致谢  uuz 让我在最前面写一个给他的致谢   感谢 ShaddockNH3 长期以来的帮助和指导  1.前言 现代的一些人工智能库（例如 transformer 库）提供了高度封装的方法供现在的 AI 应用开发去直接调用，从而不需要去关注方法的底层实现是什么样的，从顶层应用的角度上讲，这无疑是技术上的进步。以 Transformer 的实现为例，传统">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/hasu_3.png">
+<meta property="article:published_time" content="2026-05-31T15:30:00.000Z">
+<meta property="article:modified_time" content="2026-05-31T15:24:18.882Z">
+<meta property="article:author" content="Schariac125">
+<meta property="article:tag" content="人工智能，机器学习，深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/hasu_3.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "自顶向下——可能要懂的底层原理简单讲解",
+  "url": "http://example.com/2026/05/31/%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/",
+  "image": "http://example.com/images/hasu_3.png",
+  "datePublished": "2026-05-31T15:30:00.000Z",
+  "dateModified": "2026-05-31T15:24:18.882Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Schariac125",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/images/nav1.jpg"><link rel="canonical" href="http://example.com/2026/05/31/%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '自顶向下——可能要懂的底层原理简单讲解',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><script src="/js/sakura.js"></script><link rel="stylesheet" href="/css/music.css"><link rel="stylesheet" href="/css/anime.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css"><link rel="stylesheet" href="/css/bgm-aplayer.css"><link rel="stylesheet" href="/css/page-transition.css"><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.0.0"><link rel="alternate" href="/atom.xml" title="Schariac125妙妙屋" type="application/atom+xml">
+</head><body><div id="loading-box"><div class="loading-overlay"><div class="progress-wrapper"><div class="progress-percent">少女祈祷中 0%</div><div class="progress-track"><div class="progress-bar"></div></div></div></div></div><script>(() => {
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const $bar = $loadingBox?.querySelector('.progress-bar')
+  const $label = $loadingBox?.querySelector('.progress-percent')
+
+  let current = 0
+  let target = 0
+  let rafId = null
+  let finished = false
+
+  const render = () => {
+    const diff = target - current
+    if (Math.abs(diff) < 0.1) {
+      current = target
+    } else {
+      current += diff * 0.14 + 0.6
+    }
+
+    const value = Math.min(100, Math.max(0, current))
+    if ($bar) $bar.style.width = value + '%'
+    if ($label) $label.textContent = '少女祈祷中 ' + Math.round(value) + '%'
+
+    if (value >= 100 && finished) {
+      $loadingBox.classList.add('loaded')
+      $body.style.overflow = ''
+      rafId = null
+      return
+    }
+
+    if (Math.abs(target - current) > 0.01) {
+      rafId = requestAnimationFrame(render)
+    } else {
+      rafId = null
+    }
+  }
+
+  const goTo = (val) => {
+    const next = Math.min(100, val)
+    if (next > target) {
+      target = next
+      if (!rafId) rafId = requestAnimationFrame(render)
+    }
+  }
+
+  const initLoading = () => {
+    finished = false
+    current = 0
+    target = 0
+    if ($bar) $bar.style.width = '0%'
+    if ($label) $label.textContent = '少女祈祷中 0%'
+    $loadingBox.classList.remove('loaded')
+    $body.style.overflow = 'hidden'
+    goTo(40)
+  }
+
+  const endLoading = () => {
+    if (finished) return
+    finished = true
+    goTo(100)
+    setTimeout(() => {
+      $loadingBox.classList.add('loaded')
+      $body.style.overflow = ''
+    }, 420)
+  }
+
+  initLoading()
+
+  if (document.readyState === 'complete') {
+    endLoading()
+  } else {
+    document.addEventListener('DOMContentLoaded', () => goTo(80))
+    window.addEventListener('load', endLoading)
+    setTimeout(endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', () => {
+      initLoading()
+      goTo(50)
+    }, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', endLoading, 'preloader_end')
+  }
+})()</script><div id="web_bg" style="background-image: url(/images/hasu_1.png);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/new2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 查成分</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/anime/"><i class="fa-fw fas fa-tv"></i><span> ACGN相关</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/readme/"><i class="fa-fw fa fa-book"></i><span> 入站必读</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/images/hasu_3.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Schariac125妙妙屋</span></a><a class="nav-page-title" href="/"><span class="site-name">自顶向下——可能要懂的底层原理简单讲解</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-heartbeat"></i><span> 查成分</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li><li><a class="site-page child" href="/anime/"><i class="fa-fw fas fa-tv"></i><span> ACGN相关</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/readme/"><i class="fa-fw fa fa-book"></i><span> 入站必读</span></a></div><div class="menus_item"><a class="site-page" href="/comments/"><i class="fa-fw fas fa-envelope-open"></i><span> 留言板</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">自顶向下——可能要懂的底层原理简单讲解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-31T15:30:00.000Z" title="发表于 2026-05-31 23:30:00">2026-05-31</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-31T15:24:18.882Z" title="更新于 2026-05-31 23:24:18">2026-05-31</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AI/">AI</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>17分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>自顶向下——可能要懂的底层原理简单讲解</h1>
+<h2 id="0-致谢">0.致谢</h2>
+<blockquote>
+<p><s><a target="_blank" rel="noopener" href="https://github.com/ShaddockNH3">uuz</a> 让我在最前面写一个给他的致谢</s></p>
+</blockquote>
+<blockquote>
+<p>感谢 <a target="_blank" rel="noopener" href="https://github.com/ShaddockNH3">ShaddockNH3</a> 长期以来的帮助和指导</p>
+</blockquote>
+<h2 id="1-前言">1.前言</h2>
+<p>现代的一些人工智能库（例如 transformer 库）提供了高度封装的方法供现在的 AI 应用开发去直接调用，从而不需要去关注方法的底层实现是什么样的，从顶层应用的角度上讲，这无疑是技术上的进步。以 Transformer 的实现为例，传统方法采用 Pytorch 去实现需要编写上百行代码，需要程序员将略显晦涩的数学语言翻译成机器可以执行的代码，但很可惜的是，这些数学公式实在不是那么好翻译的，在实际的开发环境中，没有人会去等待一个程序员从头开始使用 Pytorch 去实现 Transformer。</p>
+<p>顶层高度封装的接口是现代人工智能技术发展的必然，毕竟反复搓轮子不是什么值得去花时间的事情，在实际的应用开发中也鼓励使用这些顶层封装好的方法，将时间花费在真正需要去关注的地方，反复纠结于那些将数学公式翻译为代码的工作不是一个开发者应该做的，这是科学家的任务。</p>
+<p>但我曾经长期认为只要会使用那些封装好的方法就万事大吉了，后面发现其实并不是这样的。那些封装好的接口和方法固然好用，但是还有一些问题，就例如说我们在使用一些方法“炼丹”的时候，如果模型的 loss 始终没有下降，那这个时候我们应该要怎么办？这个问题从底层视角上看并不是一个难题，无非就是那么几种情况什么反向传播写错了，或者是 softmax 特性导致的一些梯度消失什么的。可在一些只关注于顶层应用的程序员而言，这其实是非常费解的，文档里面写着：“loss 应该随着 epoch 的增加而下降/趋于稳定” 而这样的情况确乎是闻所未闻的，甚至有些人根本就不知道 loss 是什么东西，只知道按道理而言，这个“变量”应该是要逐渐下降的才对，至少不能现在和跳舞一样疯狂抖动吧？这不是一个好的现象，这种纯顶层的设计反而在基本的工程指标面前形成了一个可怕的知识断层。</p>
+<p>面对这样的问题常规的想法是：“那就让他们去从 Numpy 手写开始，一步一步去理解那些底层原理”。其实是有道理的这种想法，这条路径听着是非常美好的，因为如果真的坚持做下去的确能对底层的原理形成一个系统性的认知。可这太理想了，现实的情况是，很多人在面对那些晦涩难懂的数学公式和概念时就会马上敲退堂鼓，还没有等到写代码就放弃了，而这也并非是重点。</p>
+<p>我想要通过我这篇 Blog 讲明白在我认知里一些顶层开发者也必须要懂的概念，也必须要有的一些科学家思维。其实通过我这样一篇文章就想着去完全理解底层的奥妙是不现实的，能起到一个抛砖引玉的作用就是最好了，所以接下来请带着批判性的思维去看。</p>
+<h2 id="2-从线性分类器到全连接神经网络">2.从线性分类器到全连接神经网络</h2>
+<h3 id="基本认知">基本认知</h3>
+<p>最开始的人工智能是为了解决一些图像分类上的问题，在早期，主流的算法是采用 NN 与优化后的版本 kNN（在这里你不需要知道这两个算法是什么，怎么实现的，你只需要知道，这是两个非常原始的方法）但 kNN 实在是跑的太慢了，在实际的图像分类场景中根本是不可能去等的。</p>
+<p>于是业界后来就提出了线性分类器，而线性分类器的那个线性映射公式，也在后来成为了人工智能领域的“圣经”</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>f</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo separator="true">,</mo><mi>W</mi><mo separator="true">,</mo><mi>b</mi><mo stretchy="false">)</mo><mo>=</mo><mi>W</mi><msub><mi>x</mi><mi>i</mi></msub><mo>+</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">f(x_i,W,b) = Wx_i + b
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">b</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span></span></p>
+<p>这个函数长得很像一个一次函数吧（我当时也叫它“风味一次函数”），但其实这个公式里的<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> 都是矩阵。<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> 是一个相对不那么重要的参数，重点是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span> ，我们一般叫这个变量“权重”。</p>
+<p>那么为什么叫它人工智能领域的“圣经”甚至基石呢？从我们生活中的场景出发，我们经常会使用大模型问问题，而大模型就可以理解为 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span> ，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.5806em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 就是我们输入给大模型的提示词等等，而最后通过这个函数得到的结果，就是大模型输出给我们的各种模态的信息了。</p>
+<p>讲到这里还不理解也无所谓，你只需要记住下面这一句话</p>
+<p><strong>“简单理解的话，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span> 就是模型，而后面跟着的那个 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">b</span></span></span></span> 不那么重要，但它也会影响最终结果”</strong></p>
+<p>模型生来是什么都不知道的，所以我们就要去训练它，而我前面说过了，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>W</mi></mrow><annotation encoding="application/x-tex">W</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span></span></span></span> 是一个矩阵，甚至是一个非常高维的矩阵，训练的本质就是不断的去调整这个矩阵里的每一个数字，说的简单点就是加加减减。可是这个时候问题出现了，如果我们都不知道怎么去评价一个模型的好坏，那么我们又要怎么去调那个参数呢？</p>
+<p>那么这个时候就引入了一个非常重要的概念——<strong>“模型损失”，也就是我在前言里提了好多次的变量“loss”</strong></p>
+<p>损失具体是要怎么算的？不重要，把那个公式摆在上面不是我这篇博客的目的。只需要知道我们用 loss 去衡量一个模型的好坏就行了。</p>
+<p>要算 loss 那肯定就要先算模型得分和理想得分之间的差距。普通的方法计算得分非常粗暴，就是直接算出一个原始数值，<strong>而现在常用的一种方法是叫做 softmax，这个方法将分数转化为 0~1 之间的一个数字，这是一个非常重要的方法。</strong></p>
+<p>那么大家直觉里面的 loss 为什么会随着训练而下降呢？训练的本质就是通过一个不断进行的程序（这个程序后面会展开讲），不断去做题，不断根据正确答案打分，然后不断去订正，不断去学习，然后模型会自己改自己的参数，会努力让自己下次的表现变的更好，而这个过程，是有专门的名词去描述的。</p>
+<p>讲一个可能有点反直觉的事情，有人会想着说 loss 越小越好，但这其实是错误的观点，loss 太接近于 0 不是一件好事，而这个就是顶层应用上也会提到的一个概念叫做**“过拟合”**。过拟合的模型泛用性极低，对策性极强，<s>总得来说强度属于大杯</s>，而我们要的其实是一个泛化的模型，而不是一个死记硬背数据集的模型。<strong>至于我们要怎么去约束呢？用一个叫“正则化”的方法，不过这个不重要</strong></p>
+<p><strong>所以最好的模型不是 loss 非常低，而是在一个完美的范围内，而模型，是有天然过拟合的趋势的</strong></p>
+<h3 id="前向与反向传播">前向与反向传播</h3>
+<p>前向传播，反向传播，这俩名词听着感觉挺晦涩的，从字面上感觉也很不明所以，但没关系，其实是很好懂的东西。</p>
+<p>前向传播我一句话就能讲完：<strong>前向传播就是你把信息输入给模型然后模型得出答案的过程</strong></p>
+<p>反向传播如果用学院派的方法去讲，那真的会洋洋洒洒讲一大堆。这里你只需要记住：<strong>反向传播就是模型自己改自己参数的过程，就是我说的那个模型让自己变得更好的过程，目的是要让下次训练的 loss 下降</strong></p>
+<p>如果你还想知道更多，我可以告诉你的是，反向传播的一个重要过程就是求导，求完导之后有非常多的方法去做参数更新。然后更新的力度取决于一个叫做**“学习率”**的参数</p>
+<p>反向传播是一个很“数学”的过程，但好消息是，<strong>Pytorch 已经提供了一个反向传播一键方法——<code>torch.backward()</code></strong> 。使用这个方法只需要我们搭建好前向传播，然后反向传播就可以全自动了，非常方便。</p>
+<h3 id="神经网络">神经网络</h3>
+<p>神经网络是一个超级套娃。</p>
+<p>我们经常会听到神经网络有几层几层什么的，或许一开始觉得很晦涩，但是其实很简单啊，我拿一个最简单的神经网络公式举例</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>s</mi><mo>=</mo><msub><mi>W</mi><mn>2</mn></msub><mi>m</mi><mi>a</mi><mi>x</mi><mo stretchy="false">(</mo><mn>0</mn><mo separator="true">,</mo><msub><mi>W</mi><mn>1</mn></msub><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">s = W_2max(0,W_1x)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal">ma</span><span class="mord mathnormal">x</span><span class="mopen">(</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span></span></p>
+<p>你感觉这个公式和上面我说的线性映射好像，就是把两个线性映射套在一起了。你的直觉是对的，神经网络就是这样的。</p>
+<p>所以我为什么说神经网络是套娃，因为它就是把前一层的结果处理了一下，然后就把那个结果当成新的参数给下一层。只不过要记住，<strong>给下一层传信息的时候记得过非线性层，不然的话层数会坍缩。</strong></p>
+<p>这样子理解吧：<strong>假如说我们构建了一个 AI 工作流，我们要把一串杂乱无章的文本提取出来必要的信息生成一个 jsonl 文件，那么第一步我们就拿 A 模型去让它提取出有用的文本信息，然后把这个文本信息扔给下一个模型 B，让模型 B 去生成一个 json 文件，最后我们再拿模型 C 去检查模型 B 生成的结果有没有错，订正修改啥的，最后去写入 jsonl 文件里面去。这种信息在不同层间流动的过程其实就是神经网络工作的核心，因为它长得像人类神经元的传播</strong></p>
+<p>神经网络看似是一个很奇怪的概念，感觉不用讲也无所谓，但它是后面一些更高级方法的基石。而为什么标题写“全连接神经网络”呢？后面你就知道了，因为有不全连接的啊。</p>
+<h2 id="3-卷积神经网络">3.卷积神经网络</h2>
+<p>从图像算法上讲，早期主流的图像算法是经典的机器学习方法（如 kNN），后来发展出了全连接神经网络（NN）再到后来为了解决参数量过大的问题，演进出了非全连接的卷积神经网络（CNN），这是一个影响力非凡的东西。</p>
+<p>在 Pytorch 中它时常被直接写成 <code>torch.conv2d()</code> 这个方法，但是这个方法里面有太多参数，例如 <code>padding</code> ，<code>stride</code> 等等。如果不了解卷积神经网络的一些基本概念，那么到后面这些参数基本就是等于乱填了，而可惜的是，CNN 和我们前面说的那几个不一样，它现在还在被广泛使用。</p>
+<p>我上一节提了一嘴有“不全连接的神经网络”， CNN 就是那个不全连接的神经网络，它本质上还是疯狂去在不同层之间传信息，但是它传信息的方式是非常不同的。</p>
+<p>CNN 最重要的那个概念叫做——<strong>“卷积核”</strong>，要怎么去理解？你可以认为这是一个“滤镜”，而 CNN 有很多这样的“滤镜”，这些滤镜的职责就是在我们给的数据上面疯狂扫，然后找出要的东西就会拉出来。<strong>卷积核的参数其实就代表着一种特征</strong></p>
+<p>那么这个时候其实就可以讲 <code>torch.conv2d()</code> 这个方法里面的三个参数都是什么意思了</p>
+<ul>
+<li>
+<p><code>kernel_size</code>：这个就是卷积核的大小了，按照需求使用，一般而言这个参数越大，说明你越在意整体趋势，反之就是你更在意局部细节，同时，<strong>这个参数的设置也会对性能产生影响</strong></p>
+</li>
+<li>
+<p><code>padding</code> ：这个叫做填充，因为我们定义的卷积核大小可能不能完美的匹配上尺寸，所以就要去填充一些 0 数据。</p>
+</li>
+<li>
+<p><code>stride</code>：这个叫做步长，也就是卷积核一次移动多少，一般而言选 1 和 2，但是还是看实际情况。</p>
+</li>
+</ul>
+<p>CNN 一般用在图像任务上，因为它实在是太暴力太力大砖飞了。常见的一些用途有</p>
+<ul>
+<li>图像辨别分类，就例如那个手写数字分类任务。</li>
+<li>超分辨率任务，通过训练实现将模糊图像提升为高画质（可以去玩玩那个叫 Bigjpg 的网站，那就是典型的 CNN 超分）</li>
+<li>……</li>
+</ul>
+<p><strong>总的来说，CNN 就是不断的用更高效的方法去提取出局部的重要信息，而局部连接的特性就是体现在它使用卷积核而不是直接开算这一点上。在各种图像分析任务上 CNN 的发挥会非常好，因为它具备从抽象到具体，以及识别特征位置无关的特点。</strong></p>
+<h2 id="4-从-RNN-到-Transformer">4.从 RNN 到 Transformer</h2>
+<p>Transformer 一手缔造了现在各类大模型的辉煌，但我觉得可能需要讲一讲，Transformer 是怎么生出来的。</p>
+<p>我前面讲的很多东西大多数都是在图像这个模态上做文章，而到了这里其实就要去接触现在我们用的最多的一个方向 NLP （自然语言处理）</p>
+<p>语言有一个很重要的特征，每一句话都不是孤立的，都和前面说过的一些话有着千丝万缕之间的联系，那么我们要怎么去记录这些过往的状态就成了一个非常重要的问题了。</p>
+<p>最开始 RNN 采用了一个叫做隐藏状态机制的东西，这个东西在传统线性映射的基础上加入了一步利用前面的隐藏状态去计算结果并影响最终答案的过程，这样子做事实上确实可以实现“记忆”机制，但是，你不觉得这样很简单粗暴而且很蠢吗？</p>
+<p>后来 RNN 的优化版 LSTM 出现了，它引入了细胞状态的说法，它解决了 RNN 在反向传播中因为连乘效应而梯度消失的问题，简单来说细胞状态就是一个长期的记忆，并且有两个关键的操作就是输入和遗忘。</p>
+<p><strong>以上都只是科普而已，知道就行了，接下来的重头戏是 Transformer 是如何杀出一条血路的。</strong></p>
+<p>我认为 Transformer 的核心机制是必须需要知道的。它的核心机制我们叫做——<strong>“自注意力机制”</strong></p>
+<p>Transformer 完全抛弃了 RNN 那一套去用各种状态记录<strong>上下文记忆</strong>的机制，这一套机制到后面响应会超级慢，而且反向传播也会逐渐失效。那么 Transformer 做的革命性的改良是就是<strong>自注意力机制</strong>了</p>
+<p>Transformer 让每一个词都去扫描所有的词，计算与句子中其他词的相关性，得出一个概率。最后将这些概率<strong>加权求和</strong>，得出一个新向量，然后在<strong>把这个新向量去乘一个权重再过一遍 softmax 得到一个概率词表，选最大概率的那个，那就是结果了。</strong></p>
+<p>详细的过程就不给了，毕竟不是数学课。</p>
+<p>而 Transformer 架构依赖于两个核心组件</p>
+<ul>
+<li>编码器：负责深度理解，负责<strong>处理输入的信息并且整合上下文</strong></li>
+<li>解码器：负责将编码器传来的数据解析，并且去<strong>预测下一个词该是什么。</strong></li>
+</ul>
+<p><strong>你可能听过，现代的 LLM 大模型其实就是在做概率计算，而这个说法就是源于 Transformer 的底层设计自注意力机制</strong></p>
+<p>在这个机制中还有一个非常重要的概念叫做**“多头注意力”**，我们都知道，看待事物要从多个角度去看待，多头注意力就是去做这件事情，不同的注意力头会关注不同的特点，就例如说A 注意力头关注语法，B 注意力头关注情绪，C 注意力头关注实体等等，最后大家拼在一起就形成了一个整体的认知。</p>
+<p>我们说自注意力机制把一大堆词丢在一块，那么模型要怎么去知道谁先谁后？Transformer 中有一个叫做**“位置掩码”<strong>和</strong>“位置掩码”<strong>的东西，基于正弦函数去实现，会给每一个词打上一个独特的时间标签，然后通过</strong>掩码来遮挡未来的词**。这样他们就知道谁先谁后，不会乱套。至于为什么 Transformer 需要但 RNN 不需要，因为 RNN 自带位置识别。</p>
+<p>那么训练的过程是什么样的？简单来说，训练的时候就是让每一个词去并行预测下一个词，然后一下子直接算出所有的 loss，用掩码去保证不会偷看到未来的词。</p>
+<p>推理的时候就是去一个词一个词的生成，生成之后就拼到上文，作为新的序列去预测下一个词。</p>
+<blockquote>
+<p>Transformer用自注意力一次解决了并行和长距离依赖——然后借着这个强大的架构，人们发现不用每个任务从零训练，只要在海量文本上做‘下一个词预测’这个游戏，得到一个通才，再用你们的数据微调，这就是你们现在拿到的每一个大模型API和基座模型文件的来源。</p>
+</blockquote>
+<h2 id="5-原理之后">5.原理之后</h2>
+<p>只讲原理还是有点生涩了，我想着不如讲讲一些实际应用上的底层实现，至于更多的就交给你们去想了</p>
+<h3 id="为什么可以做到多模态">为什么可以做到多模态</h3>
+<p>简单来说，Transformer 只认一个东西，那就是**“token 向量序列”**，而所有的模态在进入 Transformer 处理之前都需要将其转换为 token 向量序列（这个不同的模态有不同的方法）。这种的做法好处是具有非常良好的拓展性，因为在 Transformer 看来，它不知道你给的东西到底是什么东西，它只在乎，这东西可以变成向量序列，只要是向量序列，那它就能直接解析。</p>
+<h3 id="为什么会有长下文窗口的限制">为什么会有长下文窗口的限制</h3>
+<p>Transformer 的自注意力机制要求每个词都去盯着所有词，都去计算相关性，那么这个在底层上的实现就是去通过一个<strong>点积计算</strong>实现的（想知道可以自己去查），一旦上下文长起来了，自注意力机制运行起来就会变得非常慢，而且会非常吃显存，如果不去做优化那么是很难吃得消的，但是优化往往是有代价的。所以下次不要说想一次丢一本《红楼梦》进去了</p>
+<h3 id="大模型缓存是什么">大模型缓存是什么</h3>
+<p>这个还是注意力机制的事情，因为 Transformer 生成第 N 个 token 是完全依赖于前面 N-1 个 token 的，那么就要每次都去跑一遍自注意力机制，没办法一次出全文。可是前面的很多计算都是完全重复的，聪明的做法就是把那些计算塞到缓存里面去，这样就可以很显著的减少计算次数。而我们部署大模型之后会发现显存占用持续增加，那其实就是大模型给缓存预留了一块地方。而使用缓存是有非常多的好处的，至少有些时候做优化你应该知道先去动缓存，而不是瞎调参数。</p>
+<h3 id="temperature是干啥的"><strong>temperature</strong>是干啥的</h3>
+<p>依旧自注意力机制的事情。大模型吐出一个词是因为它觉得这个词的概率最大，它是贪心的，它每次会直接选取词表里概率最大的那个词。这样子做固然是稳定的，但是长此以往在面临有些场景时就会陷入呆板的困境。temperature就是在词表生成（也就是过 softmax 前）和输出之前将所有的概率都去除以一个它，让概率分布更加平滑，这样子大模型就会吐出更多样的东西来。</p>
+<h3 id="模型为什么会对中间部分的理解差">模型为什么会对中间部分的理解差</h3>
+<p>这个和位置编码有关系，传统的 Transformer 其实位置编码是有一个上限的，这个和模型训练阶段有关系。如果推理阶段出现了超出它训练时的位置，那么它就会不知所措。尽管现代已经有人做了优化，但这个稀释效应还是刻在架构骨子里的。所以下次记得把重要信息放开头和结尾。</p>
+<h3 id="提示词工程为何有效">提示词工程为何有效</h3>
+<p>提示词工程让我们不用费劲的去微调模型（这个真的很麻烦），当我们输入提示词之后其实就已经在大模型内部建立了一个思维范式，从而让模型的自注意力自己更多的往我们设定的那个提示词方向去发展，也就是自注意力分配的权重更高了。</p>
+<h3 id="两种微调">两种微调</h3>
+<p>微调是在一个训练好的基座上进行的，这个要知道。一般有两种，一种是全参数微调，另外一种是 LoRA。</p>
+<p>全参数微调简单来说就是从头到尾根据你的数据继续走一遍完整的训练过程，是非常烧钱的。要海量的显存，并且稍不留神就容易炸，它会更新全部的参数。</p>
+<p>LoRA 不一样，它是外挂了两个矩阵去保护原本的矩阵不要被乱动，这两个外挂的矩阵是低秩的，含有的参数也更少，因为微调本来就只是“微”，不用满秩的矩阵那么大就行。最后我们得出的结果就是这几个矩阵一同作用的。所以说 LoRA 本质是外挂矩阵，所以它有可拔插的良好特性。</p>
+<h2 id="6-结语">6.结语</h2>
+<p>讲到这里其实在我个人看来需要理解的底层知识已经讲的差不多了，我更希望我这篇文章起到的作用是抛砖引玉，而不是想着从我这篇文章里获得所有答案。</p>
+<p>理解一些底层的原理其实是很重要的，这个可以帮助我们更高效更有方向的去做一些事情并且在遇到麻烦的时候有一个大致的思路去解决问题，查阅详细的资料，制定具体的方法等等。</p>
+<p>最后还是那句话，因为我本人实际水平有限，如果有讲的不好的地方可以通过我的联系方式联系我指正。</p>
+<p>——Schariac125 26.5.31 写于福州大学铜盘校区</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Schariac125</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/05/31/%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/">http://example.com/2026/05/31/%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">Schariac125妙妙屋</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%EF%BC%8C%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%EF%BC%8C%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">人工智能，机器学习，深度学习</a></div><div class="post-share"><div class="social-share" data-image="/images/hasu_3.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/03/09/%E5%8F%AA%E6%9C%89%E8%80%81%E5%A4%A9%E7%88%B7%E7%9C%8B%E5%BE%97%E6%87%82%E4%BA%86%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E7%BA%AF%E9%BB%91%E6%A1%86%E6%97%AE%E6%97%AF%E5%BC%95%E6%93%8E%E7%9A%84%E6%80%9D%E8%80%83/" title="糊代码糊到最后是输输输"><img class="cover" src="/images/hasu_3.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">糊代码糊到最后是输输输</div></div><div class="info-2"><div class="info-item-1">只有老天爷看得懂了——基于自己写的纯黑框旮旯引擎的反思 零：前言 项目地址：https://github.com/Schariac125/Gal-Engine-Try 我是第一次学Python，也是第一次学oop。你知道的，我以前只会那种面条式的C++代码和一些基础的不能再基础的算法了，上一次写项目还是写黑马的那个最基础的基于C语言的管理系统，只实现了增改查删，然后就啥都没了。 我花了两天时间写了西二AI第一轮的那俩task，就是那个奇怪的旮旯给木和宝可梦。然后的然后，我鬼点子生成了，变成了我噩梦的开端。 我当时觉得那个旮旯给木的框架耦合度也太高了，然后我就想着： “诶！那我重新写一个旮旯给木的引擎不就好了，先在黑框里面跑起来，后面看看怎么实现可视化” 从这一刻起我的人生彻底被毁掉了（？） 一：基本介绍 最基本的介绍在项目地址的README文件里已经列的轻轻楚楚了，这里也不多说，就简单说说看这个东西到底是怎样的一大坨。 我第一天晚上写这个引擎基本上只实现了一个框架还有其他的几项功能：最基本的存档读档删档，角色基类初始化，游戏主菜单界面，游戏主体游玩界面，在共通线结尾检查好感度是否...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/new2.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Schariac125</div><div class="author-info-description">🌸</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">8</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Schariac125"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Schariac125" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:schariac125@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><h2 id="最近更新：26-5-31">最近更新：26.5.31</h2>
+<ul>
+<li>更新了一篇文章</li>
+</ul>
+<h2 id="更新预告：">更新预告：</h2>
+<ul>
+<li>你猜？</li>
+</ul>
+<h2 id="🍃-欢迎光临-Schariac125-的妙妙屋">🍃 欢迎光临 Schariac125 的妙妙屋</h2>
+<p>这里记录学习的点滴，也藏着一些生活的碎碎念。<br>
+愿你来去轻盈，收获一份安静与灵感。</p>
+</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">自顶向下——可能要懂的底层原理简单讲解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E8%87%B4%E8%B0%A2"><span class="toc-number">1.1.</span> <span class="toc-text">0.致谢</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-number">1.2.</span> <span class="toc-text">1.前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BB%8E%E7%BA%BF%E6%80%A7%E5%88%86%E7%B1%BB%E5%99%A8%E5%88%B0%E5%85%A8%E8%BF%9E%E6%8E%A5%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="toc-number">1.3.</span> <span class="toc-text">2.从线性分类器到全连接神经网络</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%AE%A4%E7%9F%A5"><span class="toc-number">1.3.1.</span> <span class="toc-text">基本认知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E5%90%91%E4%B8%8E%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="toc-number">1.3.2.</span> <span class="toc-text">前向与反向传播</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="toc-number">1.3.3.</span> <span class="toc-text">神经网络</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C"><span class="toc-number">1.4.</span> <span class="toc-text">3.卷积神经网络</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%BB%8E-RNN-%E5%88%B0-Transformer"><span class="toc-number">1.5.</span> <span class="toc-text">4.从 RNN 到 Transformer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%8E%9F%E7%90%86%E4%B9%8B%E5%90%8E"><span class="toc-number">1.6.</span> <span class="toc-text">5.原理之后</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AF%E4%BB%A5%E5%81%9A%E5%88%B0%E5%A4%9A%E6%A8%A1%E6%80%81"><span class="toc-number">1.6.1.</span> <span class="toc-text">为什么可以做到多模态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89%E9%95%BF%E4%B8%8B%E6%96%87%E7%AA%97%E5%8F%A3%E7%9A%84%E9%99%90%E5%88%B6"><span class="toc-number">1.6.2.</span> <span class="toc-text">为什么会有长下文窗口的限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%BC%93%E5%AD%98%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.6.3.</span> <span class="toc-text">大模型缓存是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#temperature%E6%98%AF%E5%B9%B2%E5%95%A5%E7%9A%84"><span class="toc-number">1.6.4.</span> <span class="toc-text">temperature是干啥的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%AF%B9%E4%B8%AD%E9%97%B4%E9%83%A8%E5%88%86%E7%9A%84%E7%90%86%E8%A7%A3%E5%B7%AE"><span class="toc-number">1.6.5.</span> <span class="toc-text">模型为什么会对中间部分的理解差</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%B7%A5%E7%A8%8B%E4%B8%BA%E4%BD%95%E6%9C%89%E6%95%88"><span class="toc-number">1.6.6.</span> <span class="toc-text">提示词工程为何有效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E7%A7%8D%E5%BE%AE%E8%B0%83"><span class="toc-number">1.6.7.</span> <span class="toc-text">两种微调</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%BB%93%E8%AF%AD"><span class="toc-number">1.7.</span> <span class="toc-text">6.结语</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/05/31/%E8%87%AA%E9%A1%B6%E5%90%91%E4%B8%8B/" title="自顶向下——可能要懂的底层原理简单讲解">自顶向下——可能要懂的底层原理简单讲解</a><time datetime="2026-05-31T15:30:00.000Z" title="发表于 2026-05-31 23:30:00">2026-05-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/03/09/%E5%8F%AA%E6%9C%89%E8%80%81%E5%A4%A9%E7%88%B7%E7%9C%8B%E5%BE%97%E6%87%82%E4%BA%86%E2%80%94%E2%80%94%E5%9F%BA%E4%BA%8E%E8%87%AA%E5%B7%B1%E5%86%99%E7%9A%84%E7%BA%AF%E9%BB%91%E6%A1%86%E6%97%AE%E6%97%AF%E5%BC%95%E6%93%8E%E7%9A%84%E6%80%9D%E8%80%83/" title="糊代码糊到最后是输输输">糊代码糊到最后是输输输</a><time datetime="2026-03-08T16:00:00.000Z" title="发表于 2026-03-09 00:00:00">2026-03-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/12/08/%E7%BB%8F%E9%AA%8C%E8%B4%B4/" title="经验贴">经验贴</a><time datetime="2025-12-08T08:25:00.000Z" title="发表于 2025-12-08 16:25:00">2025-12-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/02/PAT-B%E7%9A%84%E5%86%8D%E6%8E%A2%E5%86%8D%E6%8A%A5%E2%80%94%E2%80%94%E5%B8%B8%E8%A7%81%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A8%A1%E6%8B%9F%E6%9D%BF%E5%AD%90/" title="PAT-B的再探再报">PAT-B的再探再报</a><time datetime="2025-11-01T16:20:00.000Z" title="发表于 2025-11-02 00:20:00">2025-11-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/26/%E6%AD%A2%E7%97%9B%E6%97%A0%E6%95%88/" title="止痛无效">止痛无效</a><time datetime="2025-10-25T16:30:00.000Z" title="发表于 2025-10-26 00:30:00">2025-10-26</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/images/hasu_3.png);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Schariac125</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.0.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css')
+    if (true) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'Schariac125/Schariac125.github.io',
+      'data-repo-id': 'R_kgDOP8nDdA',
+      'data-category-id': 'DIC_kwDOP8nDdM4C7MC-',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script defer src="/js/ncm.js"></script><script defer src="/js/anime.js"></script><meting-js id="17572898505" server="netease" type="playlist" fixed="true" mini="true" autoplay="false" loop="all" order="random" preload="auto" volume="0.35" list-folded="true"> </meting-js><div id="bgm-toggle" class="bgm-toggle" title="背景音乐"></div><script defer src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js"></script><script defer src="/js/bgm-toggle.js"></script><script defer src="/js/page-transition.js"></script><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/fireworks.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="请输入你要搜索的内容" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.1"></script></div></div></body></html>
