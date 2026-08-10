@@ -7,6 +7,7 @@
 - [快速开始](#-快速开始)
 - [ENABLE_CONTENT_SYNC 控制开关](#-enable_content_sync-控制开关)
 - [配置方式](#-配置方式)
+- [配置覆盖 (overrides)](#-配置覆盖-overrides)
 - [私有仓库](#-私有仓库配置)
 - [CI/CD 部署](#-cicd-部署)
 - [常用命令](#-常用命令)
@@ -216,6 +217,112 @@ CONTENT_REPO_URL=https://github.com/your-username/Mizuki-Content.git
 ENABLE_CONTENT_SYNC=true
 CONTENT_REPO_URL=git@github.com:your-username/Mizuki-Content-Private.git
 ```
+
+---
+
+## 🧩 配置覆盖 (overrides)
+
+### 解决什么问题
+
+文章和数据可以放进内容仓库，但 `src/config/` 下的配置项默认必须直接改代码仓库的源文件。对于 fork 上游、定期合并上游更新的用户，配置文件是冲突重灾区：上游每次调整配置结构，都会和本地的个人值冲突。
+
+配置覆盖把个人配置值也搬进内容仓库：`src/config/*.ts` 保持上游原版，个人值写在内容仓库的 `overrides/` 里，构建时深合并。跟进上游更新时，配置文件不再产生冲突；上游**新增**配置项自动生效，只有上游**修改结构**时才会暴露问题，且表现为编译期类型错误。
+
+**这是可选功能。** 不创建 `overrides/` 目录时，所有配置等同于上游默认值，行为与现状完全一致。
+
+### 工作方式
+
+```
+内容仓库 overrides/  ──sync-content──>  代码仓库 src/config/overrides/
+                                                    │
+                     src/config/index.ts 在导出前深合并 ↓
+
+              最终配置 = deepMerge(上游默认配置, 同名覆盖文件的 default 导出)
+```
+
+`src/config/overrides/` 已加入 `.gitignore`，不会进入代码仓库的提交历史。
+
+### 目录与命名
+
+**覆盖文件名 = 被覆盖的导出常量名**（注意有几个和上游文件名不同）：
+
+```
+内容仓库
+└── overrides/
+    ├── siteConfig.ts        →  siteConfig            (上游 siteConfig.ts)
+    ├── profileConfig.ts     →  profileConfig         (上游 profileConfig.ts)
+    ├── navBarConfig.ts      →  navBarConfig          (上游 navBarConfig.ts)
+    ├── musicPlayerConfig.ts →  musicPlayerConfig     (上游 musicConfig.ts)
+    ├── sakuraConfig.ts      →  sakuraConfig          (上游 effectsConfig.ts)
+    └── ...
+```
+
+可覆盖的 18 个配置：`announcementConfig`、`commentConfig`、`expressiveCodeConfig`、`footerConfig`、`fullscreenWallpaperConfig`、`licenseConfig`、`markdownConfig`、`musicPlayerConfig`、`navBarConfig`、`permalinkConfig`、`pioConfig`、`profileConfig`、`randomPostsConfig`、`relatedPostsConfig`、`sakuraConfig`、`shareConfig`、`sidebarLayoutConfig`、`siteConfig`。
+
+文件名不在名单内会在构建期报错并列出合法名单，不会静默失效。
+
+### 写法
+
+只写你想改的字段，其余自动取上游默认值：
+
+```ts
+// overrides/siteConfig.ts
+import type { DeepPartial, SiteConfig } from "../../types/config";
+
+export default {
+	title: "我的站点",
+	siteURL: "https://example.com/",
+	lang: "zh_CN",
+	banner: {
+		src: {
+			desktop: ["/images/banner/desktop.webp"],
+			mobile: ["/images/banner/mobile.webp"],
+		},
+		carousel: { interval: 8 },
+	},
+} satisfies DeepPartial<SiteConfig>;
+```
+
+要点：
+
+- 必须是 `export default`，命名导出不会被识别（构建期报错）；
+- 用 `DeepPartial<XxxConfig>` 而不是 `Partial<XxxConfig>`：`Partial` 只让顶层键可选，写 `carousel: { interval: 8 }` 会因为缺少 `enable`、`switchable` 而报错；
+- 相对路径 `../../types/config` 是同步到 `src/config/overrides/` 之后的位置。内容仓库本身没有 TypeScript 环境，类型检查在代码仓库执行 `pnpm type-check` 时进行。
+
+### 合并语义
+
+| 情况 | 行为 |
+| --- | --- |
+| 双方都是普通对象 | 深合并，覆盖值只影响写到的字段 |
+| 数组 | 整体替换，不拼接 |
+| 标量、`null` | 整体替换 |
+| 覆盖值里显式写 `undefined` 的键 | 跳过，保留默认值 |
+| 没有对应覆盖文件 | 原样使用上游默认值 |
+
+举例：默认 `banner.carousel` 是 `{ enable: true, interval: 3, switchable: true }`，覆盖里只写 `{ interval: 8 }`，结果是 `{ enable: true, interval: 8, switchable: true }`；而默认 `banner.src.desktop` 有 4 张图，覆盖里写 1 张，结果就是 1 张。
+
+### 触发部署
+
+内容仓库的 `trigger-build.yml` 需要把 `overrides/**` 加进 `paths`，否则只改配置不会触发站点重新构建：
+
+```yaml
+on:
+  push:
+    branches: [main]
+    paths:
+      - "posts/**"
+      - "spec/**"
+      - "data/**"
+      - "images/**"
+      - "overrides/**"
+```
+
+### 已知限制
+
+- **评论语言不会自动跟随 `siteConfig.lang`。** `src/config/commentConfig.ts` 在模块顶层引用 `siteConfig.ts` 里的语言常量填充 Twikoo / Giscus 的 `lang`，覆盖 `siteConfig.lang` 时需要同时提供 `overrides/commentConfig.ts` 覆盖对应字段。
+- **读取配置请统一走 `@/config` 入口。** 直接 `import { siteConfig } from "@/config/siteConfig"` 会绕过合并，拿到未覆盖的默认值。
+- **开发服务器不监听内容仓库。** `src/config/overrides/` 是指向内容目录的链接，改完覆盖文件需要重启 `pnpm dev`。
+- **`scripts/compress-fonts/` 暂不读取覆盖值**，该目录是独立的手动工具，不在 `pnpm build` 流程内。
 
 ---
 

@@ -23,6 +23,9 @@ pnpm-debug.log*
 /content/
 *.backup
 
+# config overrides synced from the content repository
+/src/config/overrides/
+
 # Large zip files
 *.zip
 

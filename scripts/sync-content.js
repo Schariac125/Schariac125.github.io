@@ -98,6 +98,7 @@ const contentMappings = [
 	{ src: "spec", dest: "src/content/spec" },
 	{ src: "data", dest: "src/data" },
 	{ src: "images", dest: "public/images" },
+	{ src: "overrides", dest: "src/config/overrides" },
 ];
 
 for (const mapping of contentMappings) {
