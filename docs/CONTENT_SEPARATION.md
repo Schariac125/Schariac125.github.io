@@ -284,7 +284,7 @@ pnpm export-config
 cp overrides-export/*.ts <内容仓库>/overrides/
 
 # 3. 还原代码仓库的配置为上游原版
-#    这一步是收益来源：src/config/ 不再有你的改动，之后合并上游不会在配置上冲突
+#    还原后 src/config/ 不再有个人改动，之后合并上游不会在配置上冲突
 git checkout upstream/master -- src/config/
 
 # 4. 同步并校验
@@ -339,7 +339,7 @@ export default {
 | 覆盖值里显式写 `undefined` 的键 | 跳过，保留默认值 |
 | 没有对应覆盖文件 | 原样使用上游默认值 |
 
-举例：默认 `banner.carousel` 是 `{ enable: true, interval: 3, switchable: true }`，覆盖里只写 `{ interval: 8 }`，结果是 `{ enable: true, interval: 8, switchable: true }`；而默认 `banner.src.desktop` 有 4 张图，覆盖里写 1 张，结果就是 1 张。
+举例：默认 `banner.carousel` 是 `{ enable: true, interval: 3, switchable: true }`，覆盖里只写 `{ interval: 8 }`，结果是 `{ enable: true, interval: 8, switchable: true }`；数组则是整体替换，比如覆盖 `banner.src.desktop` 只写 1 张图，结果就是这 1 张，不会与默认列表拼接。
 
 ### 触发部署
 

@@ -61,7 +61,7 @@ export function extractBlock(content, blockKey) {
  * 在若干份配置文本里按顺序查找 blockKey 块内的字段，返回第一个命中的捕获组。
  *
  * 覆盖文件里存在该块但没写这个字段时，继续往后一份文本找，而不是就地返回
- * 空值——这正是「只覆盖 vmid、coverMirror 仍取默认」能生效的原因。
+ * 空值，保证未覆盖的字段回退到默认配置。
  */
 export function matchInBlock(sources, blockKey, pattern) {
 	for (const content of sources) {
