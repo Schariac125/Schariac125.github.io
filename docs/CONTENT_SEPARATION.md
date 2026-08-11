@@ -392,7 +392,7 @@ on:
 - **深合并表达不了「删除」。** 覆盖只能改值或加字段，没法把上游默认里的某个键去掉。`pnpm export-config` 遇到这种情况会明确报出来，需要手工处理。
 - **评论语言不会自动跟随 `siteConfig.lang`。** `src/config/commentConfig.ts` 在模块顶层引用 `siteConfig.ts` 里的语言常量填充 Twikoo / Giscus 的 `lang`，覆盖 `siteConfig.lang` 时需要同时提供 `overrides/commentConfig.ts` 覆盖对应字段。
 - **读取配置请统一走 `@/config` 入口。** 直接 `import { siteConfig } from "@/config/siteConfig"` 会绕过合并，拿到未覆盖的默认值。
-- **开发服务器不监听内容仓库。** `src/config/overrides/` 是指向内容目录的链接，改完覆盖文件需要重启 `pnpm dev`。
+- **开发服务器不监听内容仓库。** `src/config/overrides/` 在每次 dev/build 前由 sync-content 从内容仓库复制而来；dev 运行中修改覆盖文件需要重启 `pnpm dev` 才会重新同步。
 - **`scripts/compress-fonts/` 暂不读取覆盖值**，该目录是独立的手动工具，不在 `pnpm build` 流程内。番剧数据脚本（`update-anime` / `update-bangumi` / `update-bilibili`）已经会优先读覆盖值。
 
 ---
