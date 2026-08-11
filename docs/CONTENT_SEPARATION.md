@@ -228,7 +228,7 @@ CONTENT_REPO_URL=git@github.com:your-username/Mizuki-Content-Private.git
 
 配置覆盖把个人配置值也搬进内容仓库：`src/config/*.ts` 保持上游原版，个人值写在内容仓库的 `overrides/` 里，构建时深合并。跟进上游更新时，配置文件不再产生冲突；上游**新增**配置项自动生效，只有上游**修改结构**时才会暴露问题，且表现为编译期类型错误。
 
-**这是可选功能。** 不创建 `overrides/` 目录时，所有配置等同于上游默认值，行为与现状完全一致。
+**这是可选功能，也是实验性功能。** 不创建 `overrides/` 目录时，所有配置等同于上游默认值，行为与现状完全一致；但启用前请阅读[迁移步骤](#迁移步骤把已有配置搬进内容仓库)中的注意事项。
 
 ### 工作方式
 
@@ -263,72 +263,42 @@ CONTENT_REPO_URL=git@github.com:your-username/Mizuki-Content-Private.git
 
 ### 迁移步骤：把已有配置搬进内容仓库
 
-如果你已经在 `src/config/` 里改了一堆个人配置，用 `pnpm export-config` 一键抽出来，不用手抄。
+> ⚠️ **实验性功能，慎用**：配置分离（overrides）目前仍处于早期阶段，测试覆盖的场景有限，边界情况未必都验证到。迁移前请先提交或备份当前配置，迁移后务必完整校验一遍；重要站点建议先观察一段时间再决定是否长期使用。
 
-**前置条件**：代码仓库有一个指向「配置还是上游原版」的 git remote。fork 用户通常已经有了：
+如果你已经改过 `src/config/` 里的配置，可以用 `pnpm export-config` 自动抽出「与上游不同的字段」生成覆盖文件，不需要手抄。
+
+**前置条件**：代码仓库里有一个「配置还是上游原版」的 git remote 可作基准。fork 用户通常已经有了：
 
 ```bash
-git remote -v          # 确认有 upstream 或 origin 指向上游
-git fetch upstream     # 拉一下，保证基准是最新的
+git remote -v          # 确认有 upstream（或 origin）指向上游仓库
+git fetch upstream     # 更新基准
 ```
 
-**第 1 步：导出个人配置**
+**迁移流程**：
 
 ```bash
+# 1. 导出个人配置：与上游基准逐字段比对，结果写入 overrides-export/
 pnpm export-config
-```
 
-脚本会自动挑基准（依次尝试 `upstream/master`、`upstream/main`、`origin/master`、`origin/main`），把当前 `src/config/` 与那一版逐字段比对，只把**你改过的字段**写进 `overrides-export/`：
+# 2. 把覆盖文件放进内容仓库
+cp overrides-export/*.ts <内容仓库>/overrides/
 
-```
-上游基准：upstream/master (453cc42)
-导出目录：overrides-export
-
-  已导出 siteConfig.ts（16 个顶层键）
-  已导出 profileConfig.ts（3 个顶层键）
-  已导出 navBarConfig.ts（1 个顶层键）
-  ...
-与上游一致、无需覆盖：sakuraConfig、licenseConfig、markdownConfig、...
-```
-
-基准不对时用 `--ref` 手动指定，想直接写进内容仓库用 `--out`：
-
-```bash
-pnpm export-config --ref=upstream/v9.0.0
-pnpm export-config --out=../Mizuki-Content/overrides
-```
-
-导出前脚本会自检 `deepMerge(上游默认, 覆盖) === 你当前的配置`，对不上会明确报出是哪个配置、差在哪，不会生成一份「看着像但装上不一样」的覆盖。
-
-**第 2 步：放进内容仓库**
-
-```bash
-cp overrides-export/*.ts ../Mizuki-Content/overrides/
-```
-
-**第 3 步：把代码仓库的配置还原成上游原版**
-
-这一步是收益的来源——`src/config/` 不再有你的改动，之后合并上游就不会在配置文件上冲突：
-
-```bash
+# 3. 还原代码仓库的配置为上游原版
+#    这一步是收益来源：src/config/ 不再有你的改动，之后合并上游不会在配置上冲突
 git checkout upstream/master -- src/config/
+
+# 4. 同步并校验
+pnpm sync-content && pnpm type-check && pnpm build
 ```
 
-**第 4 步：同步并校验**
+**要点**：
 
-```bash
-pnpm sync-content     # overrides/ -> src/config/overrides/
-pnpm type-check       # 覆盖文件的类型检查在这一步做
-pnpm build
-```
+- 导出基准自动挑选（依次尝试 `upstream/master`、`upstream/main`、`origin/master`、`origin/main`），不对时用 `--ref=<git-ref>` 指定；`--out=<目录>` 可以直接写进内容仓库。
+- 导出前脚本会自检「覆盖合并回去是否等于你当前的配置」，无法还原时会报出具体原因，不会生成不一致的覆盖文件。
+- 校验标准：`type-check` 通过，且构建出的站点与迁移前渲染一致。
+- 内容仓库如果配置了部署触发工作流，记得把 `overrides/**` 加进 `paths`，见下面的[触发部署](#触发部署)。
 
-`pnpm type-check` 通过 + 站点渲染结果和之前一致，就说明搬迁成功。
-
-**第 5 步：让内容仓库的配置改动能触发部署**
-
-见下面的[触发部署](#触发部署)。
-
-**回滚**：覆盖机制是纯叠加的，删掉 `overrides/` 里的文件、重新 `pnpm sync-content`，配置就回到上游默认值；想完全退回旧方式，把个人配置写回 `src/config/*.ts` 即可，代码不需要改。
+**回滚**：删掉内容仓库 `overrides/` 里的文件、重新 `pnpm sync-content`，配置即回到上游默认值；想完全退回直接修改 `src/config/*.ts` 的旧方式也可以，代码不需要任何改动。
 
 ### 写法
 
