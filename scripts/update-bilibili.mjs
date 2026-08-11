@@ -38,9 +38,7 @@ async function withRetry(apiCall, retries = 3) {
 }
 
 function getUserIdFromConfig() {
-	const vmid = matchSiteConfig(
-		/bilibili:\s*\{[\s\S]*?vmid:\s*["']([^"']+)["']/,
-	);
+	const vmid = matchSiteConfig("bilibili", /vmid:\s*["']([^"']+)["']/);
 
 	if (vmid === null) {
 		console.error("✘ Failed to read Bilibili vmid from config/siteConfig.ts");
@@ -60,17 +58,15 @@ async function getSessdataFromConfig() {
 }
 
 function getCoverMirrorFromConfig() {
-	return matchSiteConfig(/coverMirror:\s*["']([^"']*)["']/) ?? "";
+	return matchSiteConfig("bilibili", /coverMirror:\s*["']([^"']*)["']/) ?? "";
 }
 
 function getUseWebpFromConfig() {
-	return matchSiteConfig(/useWebp:\s*(true|false)/) !== "false";
+	return matchSiteConfig("bilibili", /useWebp:\s*(true|false)/) !== "false";
 }
 
 function getAnimeModeFromConfig() {
-	return (
-		matchSiteConfig(/anime:\s*\{[\s\S]*?mode:\s*["']([^"']+)["']/) || "bangumi"
-	);
+	return matchSiteConfig("anime", /mode:\s*["']([^"']+)["']/) || "bangumi";
 }
 
 async function getDataPage(vmid, status, typeNum = 1) {

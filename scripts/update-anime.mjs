@@ -4,9 +4,7 @@ import { fileURLToPath } from "url";
 import { matchSiteConfig } from "./read-site-config.mjs";
 
 function getAnimeModeFromConfig() {
-	return (
-		matchSiteConfig(/anime:\s*\{[\s\S]*?mode:\s*["']([^"']+)["']/) || "bangumi"
-	);
+	return matchSiteConfig("anime", /mode:\s*["']([^"']+)["']/) || "bangumi";
 }
 
 function runScript(scriptPath) {

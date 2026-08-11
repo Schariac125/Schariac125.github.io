@@ -26,6 +26,9 @@ pnpm-debug.log*
 # config overrides synced from the content repository
 /src/config/overrides/
 
+# output of `pnpm export-config`
+/overrides-export/
+
 # Large zip files
 *.zip
 

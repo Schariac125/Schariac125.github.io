@@ -261,6 +261,75 @@ CONTENT_REPO_URL=git@github.com:your-username/Mizuki-Content-Private.git
 
 文件名不在名单内会在构建期报错并列出合法名单，不会静默失效。
 
+### 迁移步骤：把已有配置搬进内容仓库
+
+如果你已经在 `src/config/` 里改了一堆个人配置，用 `pnpm export-config` 一键抽出来，不用手抄。
+
+**前置条件**：代码仓库有一个指向「配置还是上游原版」的 git remote。fork 用户通常已经有了：
+
+```bash
+git remote -v          # 确认有 upstream 或 origin 指向上游
+git fetch upstream     # 拉一下，保证基准是最新的
+```
+
+**第 1 步：导出个人配置**
+
+```bash
+pnpm export-config
+```
+
+脚本会自动挑基准（依次尝试 `upstream/master`、`upstream/main`、`origin/master`、`origin/main`），把当前 `src/config/` 与那一版逐字段比对，只把**你改过的字段**写进 `overrides-export/`：
+
+```
+上游基准：upstream/master (453cc42)
+导出目录：overrides-export
+
+  已导出 siteConfig.ts（16 个顶层键）
+  已导出 profileConfig.ts（3 个顶层键）
+  已导出 navBarConfig.ts（1 个顶层键）
+  ...
+与上游一致、无需覆盖：sakuraConfig、licenseConfig、markdownConfig、...
+```
+
+基准不对时用 `--ref` 手动指定，想直接写进内容仓库用 `--out`：
+
+```bash
+pnpm export-config --ref=upstream/v9.0.0
+pnpm export-config --out=../Mizuki-Content/overrides
+```
+
+导出前脚本会自检 `deepMerge(上游默认, 覆盖) === 你当前的配置`，对不上会明确报出是哪个配置、差在哪，不会生成一份「看着像但装上不一样」的覆盖。
+
+**第 2 步：放进内容仓库**
+
+```bash
+cp overrides-export/*.ts ../Mizuki-Content/overrides/
+```
+
+**第 3 步：把代码仓库的配置还原成上游原版**
+
+这一步是收益的来源——`src/config/` 不再有你的改动，之后合并上游就不会在配置文件上冲突：
+
+```bash
+git checkout upstream/master -- src/config/
+```
+
+**第 4 步：同步并校验**
+
+```bash
+pnpm sync-content     # overrides/ -> src/config/overrides/
+pnpm type-check       # 覆盖文件的类型检查在这一步做
+pnpm build
+```
+
+`pnpm type-check` 通过 + 站点渲染结果和之前一致，就说明搬迁成功。
+
+**第 5 步：让内容仓库的配置改动能触发部署**
+
+见下面的[触发部署](#触发部署)。
+
+**回滚**：覆盖机制是纯叠加的，删掉 `overrides/` 里的文件、重新 `pnpm sync-content`，配置就回到上游默认值；想完全退回旧方式，把个人配置写回 `src/config/*.ts` 即可，代码不需要改。
+
 ### 写法
 
 只写你想改的字段，其余自动取上游默认值：
@@ -287,6 +356,7 @@ export default {
 
 - 必须是 `export default`，命名导出不会被识别（构建期报错）；
 - 用 `DeepPartial<XxxConfig>` 而不是 `Partial<XxxConfig>`：`Partial` 只让顶层键可选，写 `carousel: { interval: 8 }` 会因为缺少 `enable`、`switchable` 而报错；
+- `navBarConfig.links` 里的预设项是枚举，要写 `LinkPreset.Home` 并 `import { LinkPreset } from "../../types/config"`，不能写裸数字；
 - 相对路径 `../../types/config` 是同步到 `src/config/overrides/` 之后的位置。内容仓库本身没有 TypeScript 环境，类型检查在代码仓库执行 `pnpm type-check` 时进行。
 
 ### 合并语义
@@ -319,10 +389,11 @@ on:
 
 ### 已知限制
 
+- **深合并表达不了「删除」。** 覆盖只能改值或加字段，没法把上游默认里的某个键去掉。`pnpm export-config` 遇到这种情况会明确报出来，需要手工处理。
 - **评论语言不会自动跟随 `siteConfig.lang`。** `src/config/commentConfig.ts` 在模块顶层引用 `siteConfig.ts` 里的语言常量填充 Twikoo / Giscus 的 `lang`，覆盖 `siteConfig.lang` 时需要同时提供 `overrides/commentConfig.ts` 覆盖对应字段。
 - **读取配置请统一走 `@/config` 入口。** 直接 `import { siteConfig } from "@/config/siteConfig"` 会绕过合并，拿到未覆盖的默认值。
 - **开发服务器不监听内容仓库。** `src/config/overrides/` 是指向内容目录的链接，改完覆盖文件需要重启 `pnpm dev`。
-- **`scripts/compress-fonts/` 暂不读取覆盖值**，该目录是独立的手动工具，不在 `pnpm build` 流程内。
+- **`scripts/compress-fonts/` 暂不读取覆盖值**，该目录是独立的手动工具，不在 `pnpm build` 流程内。番剧数据脚本（`update-anime` / `update-bangumi` / `update-bilibili`）已经会优先读覆盖值。
 
 ---
 
@@ -479,6 +550,7 @@ CONTENT_REPO_URL=https://YOUR_TOKEN@github.com/your-username/Mizuki-Content-Priv
 |------|------|
 | `pnpm run init-content` | 运行交互式初始化向导 |
 | `pnpm run sync-content` | 手动同步内容仓库 |
+| `pnpm run export-config` | 导出个人配置为 `overrides/` 覆盖文件 |
 | `pnpm run check` | 运行 Astro 诊断 |
 | `pnpm run type-check` | 运行 TypeScript 类型检查 |
 | `pnpm dev` | 启动开发服务器 (自动同步) |

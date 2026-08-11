@@ -10,9 +10,7 @@ const OUTPUT_FILE = path.join(
 );
 
 function getUserIdFromConfig() {
-	const userId = matchSiteConfig(
-		/bangumi:\s*\{[\s\S]*?userId:\s*["']([^"']+)["']/,
-	);
+	const userId = matchSiteConfig("bangumi", /userId:\s*["']([^"']+)["']/);
 
 	if (!userId) {
 		console.error("✘ Failed to read Bangumi ID from config/siteConfig.ts");
@@ -29,9 +27,7 @@ function getUserIdFromConfig() {
 }
 
 function getAnimeModeFromConfig() {
-	return (
-		matchSiteConfig(/anime:\s*\{[\s\S]*?mode:\s*["']([^"']+)["']/) || "bangumi"
-	);
+	return matchSiteConfig("anime", /mode:\s*["']([^"']+)["']/) || "bangumi";
 }
 
 // 模拟延迟防止 API 限制
