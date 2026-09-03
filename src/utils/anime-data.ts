@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import localAnimeList from "../data/anime";
+import { siteConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 
@@ -88,7 +89,7 @@ export function getAnimeSourceConfigs(): Record<string, AnimeSourceConfig> {
 		bangumi: {
 			type: "json",
 			filename: "bangumi-data.json",
-			fetchOnDev: undefined,
+			fetchOnDev: siteConfig.bangumi?.fetchOnDev ?? false,
 			emptyDescription: i18n(I18nKey.animeEmptyBangumi),
 		},
 	};

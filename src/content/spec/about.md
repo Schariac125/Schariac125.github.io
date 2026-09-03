@@ -1,49 +1,55 @@
+# Ciallo～(∠・ω<)⌒☆
 
-This website is built with the **Astro** framework using the [Mizuki](https://github.com/LyraVoid/Mizuki) theme.
+## 🌈你好，欢迎光临我的Blog。
 
-::github{repo="LyraVoid/Mizuki"}
+#### 🌿 可以知道的信息
 
-## 🌟 Theme Features
+- 福州大学计算机科学与技术专业在读，2025级本科生。
+- 福州大学西二在线成员。
+- 墙内外大部分工作学习技术相关平台同名，社交平台另有马甲。
 
-### 🎨 Design & User Experience
-- **Modern & Elegant Design** - Clean, minimalist interface with beautiful typography
-- **Fully Responsive** - Optimized for all devices from mobile to desktop
-- **Dark/Light Mode** - Automatic theme switching with smooth transitions
-- **Beautiful Typography** - Enhanced readability with JetBrains Mono font
-- **Smooth Animations** - Fluid page transitions and interactive elements
+#### 🛠️ 目前在做
 
-### 🔍 Content & Search
-- **Advanced Search** - Powered by [Pagefind](https://pagefind.app/) for fast, accurate results
-- **Enhanced Markdown** - Extended syntax with code highlighting and math support
-- **Interactive Table of Contents** - Auto-scroll navigation for long articles
-- **RSS Feed Generation** - Stay updated with automatic feed generation
-- **Reading Time Estimation** - Know how long articles take to read
-- **Post Categorization** - Organize content with tags and categories
+- 维护这个博客
+- 学习人工智能，全栈开发
+- 在社团里打杂
+- 不定期分享一些技术笔记
+- 限时分享一些杂谈
 
+#### 🌸 成分
 
+- 明日方舟休闲摆烂玩家
+- 以前玩过很多米游之人
+- 地平线系列休闲玩家
+- QQ飞车中度玩家
+- 邦多利嗜血观众
+- 已和万代和解的缪虹莲粉丝
+- 经常被诋毁的百合爱好者
+- 轻度 Galgame 玩家
+- 重度日轻阅读者
+- 最近突然喜欢上了看管人
+- 能和我听一辈子nayuta吗
+- 可能还会一点心理学和精神分析
+- 成分非常复杂，能想到的领域我大多都了解一点，不过有点讨厌，为什么这个只读bangumi的番？
 
-### 📱 Special Pages
-- **Anime Tracking Page** - Track your anime watching progress with ratings
-- **Friends Links Page** - Showcase friend websites with beautiful cards
-- **Diary/Moments Page** - Share life moments like social media posts
-- **Archive Page** - Organized timeline view of all posts
-- **About Page** - Customizable personal introduction (this page!)
+#### 📮 联系
 
-### 🛠 Technical Features
-- **Enhanced Code Blocks** - Powered by [Expressive Code](https://expressive-code.com/)
-- **Math Support** - LaTeX rendering with KaTeX for mathematical expressions
-- **Image Optimization** - PhotoSwipe gallery with lazy loading
-- **SEO Optimized** - Built-in sitemap and meta tags for better search visibility
-- **Performance Optimized** - Fast loading with caching and optimization
-- **Comment System Ready** - Integration support for Twikoo comments
+- 📧 邮箱：schariac125@gmail.com/schariac125@foxmail.com
+- 🐱 GitHub：[Schariac125](https://github.com/Schariac125)
+- 欢迎和平讨论与正经交流，吵架另寻他处谢谢
+- （邮箱信息看到了肯定会回，没回就是没看到）
 
-### 🎯 Advanced Markdown Features
-- **Callouts & Admonitions** - Beautiful info boxes with `> [!NOTE]`, `> [!TIP]`, `> [!WARNING]`
-- **Mathematical Equations** - Write LaTeX math with `$inline$` and `$$block$$` syntax
-- **GitHub Cards** - Embed repository cards with `::github{repo="user/repo"}`
-- **Syntax Highlighting** - Advanced code highlighting with line numbers
-- **Copy Code Buttons** - Easy code copying functionality
+## 📝 版权声明
+
+本站所有原创文章，除特别注明外，均采用  
+
+[CC BY-NC-SA 4.0 署名-非商业性使用-相同方式共享许可协议](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh)  
+
+转载请注明出处，谢谢支持 💛
 
 ---
 
-*Built with ❤️ using Astro and inspired by modern web design principles.*
+> 愿我们都能在文字与代码之间，  
+>
+> 找到属于自己的宁静与热爱。
+
